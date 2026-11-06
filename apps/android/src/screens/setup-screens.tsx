@@ -1265,6 +1265,7 @@ function languageOptions(): Array<{ value: LanguagePreference; name: string }> {
     { value: 'es-ES', name: 'Español' },
     { value: 'de-DE', name: 'Deutsch' },
     { value: 'fr-FR', name: 'Français' },
+    { value: 'vi-VN', name: 'Tiếng Việt' },
   ]
 }
 
