@@ -6,8 +6,9 @@ import jaJP from './ja-JP'
 import esES from './es-ES'
 import deDE from './de-DE'
 import frFR from './fr-FR'
+import viVN from './vi-VN'
 
-export type AppLanguage = 'en-US' | 'zh-CN' | 'zh-TW' | 'ja-JP' | 'es-ES' | 'de-DE' | 'fr-FR'
+export type AppLanguage = 'en-US' | 'zh-CN' | 'zh-TW' | 'ja-JP' | 'es-ES' | 'de-DE' | 'fr-FR' | 'vi-VN'
 export type LanguagePreference = 'system' | AppLanguage
 
 export const messageCatalogs: Record<AppLanguage, Messages> = {
@@ -18,6 +19,7 @@ export const messageCatalogs: Record<AppLanguage, Messages> = {
   'es-ES': esES,
   'de-DE': deDE,
   'fr-FR': frFR,
+  'vi-VN': viVN,
 }
 
 let systemLocaleTags = [defaultSystemLocale()]
@@ -71,6 +73,7 @@ function resolveLanguage(nextPreference: LanguagePreference, localeTags: readonl
     if (language === 'es') return 'es-ES'
     if (language === 'de') return 'de-DE'
     if (language === 'fr') return 'fr-FR'
+    if (language === 'vi') return 'vi-VN'
   }
   return 'en-US'
 }

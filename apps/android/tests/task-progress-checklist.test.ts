@@ -330,8 +330,8 @@ describe('Task Progress Checklist (任务进度清单)', () => {
   })
 
   describe('Locale synchronization', () => {
-    it('all 7 language catalogs define taskChecklist in sessionActivity', () => {
-      const languages = ['zh-CN', 'en-US', 'zh-TW', 'ja-JP', 'es-ES', 'de-DE', 'fr-FR'] as const
+    it('all 8 language catalogs define taskChecklist in sessionActivity', () => {
+      const languages = ['zh-CN', 'en-US', 'zh-TW', 'ja-JP', 'es-ES', 'de-DE', 'fr-FR', 'vi-VN'] as const
       for (const lang of languages) {
         const catalog = messageCatalogs[lang]
         expect(catalog.sessionActivity.taskChecklist, `Language ${lang} should define taskChecklist`).toBeTruthy()
