@@ -1,10 +1,11 @@
 import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { chmod, mkdir, mkdtemp, readFile, readdir, rename, rm, stat, symlink, writeFile } from 'node:fs/promises'
+import { once } from 'node:events'
+import { chmod, link, mkdir, mkdtemp, readFile, readdir, rename, rm, stat, symlink, truncate, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { IdentityInvalidError, IdentityStore, prepareDefaultIdentityDirectory, serverStorageDirectory } from '../src/identity-store.js'
+import { IdentityInvalidError, IdentityStore, prepareDefaultIdentityDirectory, resetDefaultIdentityRoles, serverStorageDirectory } from '../src/identity-store.js'
 
 import { ServerCredentialStore } from '../src/server-credentials.js'
 
@@ -14,6 +15,19 @@ vi.mock('node:fs/promises', async importOriginal => {
 })
 
 const directories: string[] = []
+
+async function mockMoveFailure(source: string, target: string, code: string, createTarget = false): Promise<void> {
+  const actual = await vi.importActual<typeof import('node:fs/promises')>('node:fs/promises')
+  let pending = true
+  vi.mocked(rename).mockImplementation(async (from, to) => {
+    if (pending && from === source && to === target) {
+      pending = false
+      if (createTarget) await mkdir(target)
+      throw Object.assign(createTarget ? new IdentityInvalidError('destination appeared') : new Error('move unavailable'), { code })
+    }
+    return actual.rename(from, to)
+  })
+}
 
 afterEach(async () => {
   await Promise.all(directories.splice(0).map(directory => rm(directory, { recursive: true, force: true })))
@@ -377,10 +391,7 @@ describe('IdentityStore', () => {
       const target = join(home, 'ds-harness-remote')
       const original = await new IdentityStore({ directory: source }).loadOrCreate('Host')
       if (scenario === 'conflict') await mkdir(target)
-      if (scenario === 'destination-race') vi.mocked(rename).mockImplementationOnce(async (_source, destination) => {
-        await mkdir(destination)
-        throw Object.assign(new IdentityInvalidError('destination appeared'), { code: 'EEXIST' })
-      })
+      if (scenario === 'destination-race') await mockMoveFailure(source, target, 'EEXIST', true)
       if (scenario === 'identity-lock') await writeFile(join(source, 'device.lock'), String(process.pid))
       if (scenario === 'refresh-lock') await mkdir(join(source, 'server-credentials.json.refresh-lock'))
       if (scenario === 'symlink') await symlink(join(source, 'device.key'), join(source, 'linked'))
@@ -390,6 +401,136 @@ describe('IdentityStore', () => {
     }
     const directory = await temporaryDirectory()
     expect(await prepareDefaultIdentityDirectory({ directory })).toBe(directory)
+  })
+
+  it('moves an idle refresh queue marker and rejects an active queue holder', async () => {
+    const home = await temporaryDirectory()
+    const source = join(home, 'remote')
+    await new IdentityStore({ directory: source }).loadOrCreate('Host')
+    await new ServerCredentialStore(source).withRefreshLock(async () => undefined)
+    const marker = join(source, 'server-credentials.json.refresh-lock')
+    expect(await readFile(marker, 'utf8')).toBe('DSH_REFRESH_LOCK_V2\n')
+    const holder = `${marker}.holder-${process.pid}-00000000-0000-7000-8000-000000000000`
+    await writeFile(holder, `${process.pid}-00000000-0000-7000-8000-000000000000 1\n`)
+    await expect(prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })).rejects.toMatchObject({ code: 'IDENTITY_LOCKED' })
+    await rm(holder)
+    expect(await prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })).toBe(join(home, 'ds-harness-remote'))
+    expect(await readFile(join(home, 'ds-harness-remote', 'server-credentials.json.refresh-lock'), 'utf8'))
+      .toBe('DSH_REFRESH_LOCK_V2\n')
+  })
+
+  it.skipIf(process.platform !== 'linux')('moves storage after cleaning a dead holder and accepts a queue temp file', async () => {
+    const home = await temporaryDirectory()
+    const source = join(home, 'remote')
+    await new IdentityStore({ directory: source }).loadOrCreate('Host')
+    const lock = join(source, 'server-credentials.json.refresh-lock')
+    await writeFile(lock, 'DSH_REFRESH_LOCK_V2\n')
+    const owner = spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'], { stdio: 'ignore' })
+    const pid = owner.pid!
+    owner.kill('SIGKILL')
+    await once(owner, 'exit')
+    const id = `${pid}-00000000-0000-7000-8000-000000000001`
+    await writeFile(`${lock}.holder-${id}`, `${id} 1\n`)
+    const temporary = `${lock}.holder-${id}.${pid}.00000000-0000-7000-8000-000000000002.tmp`
+    await writeFile(temporary, 'partial')
+    const target = await prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })
+    expect(target).toBe(join(home, 'ds-harness-remote'))
+    expect(await readdir(target)).not.toContain(`server-credentials.json.refresh-lock.holder-${id}`)
+    expect(await readFile(join(target, temporary.slice(source.length + 1)), 'utf8')).toBe('partial')
+  })
+
+  it.skipIf(process.platform !== 'linux')('removes verified hardlink remnants from an interrupted refresh lock publication', async () => {
+    const home = await temporaryDirectory()
+    const source = join(home, 'remote')
+    await new IdentityStore({ directory: source }).loadOrCreate('Host')
+    const dead = await deadPid()
+    const marker = join(source, 'server-credentials.json.refresh-lock')
+    await writeFile(marker, 'DSH_REFRESH_LOCK_V2\n', { mode: 0o600 })
+    const markerTemp = `${marker}.${dead}.00000000-0000-7000-8000-000000000001.tmp`
+    await link(marker, markerTemp)
+    const id = `${dead}-00000000-0000-7000-8000-000000000002`
+    const holder = `${marker}.holder-${id}`
+    await writeFile(holder, `${id} 1\n`, { mode: 0o600 })
+    const holderTemp = `${holder}.${dead}.00000000-0000-7000-8000-000000000003.tmp`
+    await link(holder, holderTemp)
+    expect((await stat(marker)).nlink).toBe(2)
+    expect((await stat(holder)).nlink).toBe(2)
+
+    const target = await prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })
+    expect(target).toBe(join(home, 'ds-harness-remote'))
+    expect(await readdir(target)).not.toContain(markerTemp.slice(source.length + 1))
+    expect(await readdir(target)).not.toContain(holderTemp.slice(source.length + 1))
+    expect(await readdir(target)).not.toContain(holder.slice(source.length + 1))
+    expect((await stat(join(target, 'server-credentials.json.refresh-lock'))).nlink).toBe(1)
+  })
+
+  it.skipIf(process.platform !== 'linux')('rejects a queue temp that does not link to its matching published file', async () => {
+    const home = await temporaryDirectory()
+    const source = join(home, 'remote')
+    await new IdentityStore({ directory: source }).loadOrCreate('Host')
+    const dead = await deadPid()
+    const marker = join(source, 'server-credentials.json.refresh-lock')
+    await writeFile(marker, 'DSH_REFRESH_LOCK_V2\n', { mode: 0o600 })
+    await link(marker, join(home, 'foreign-link'))
+    const markerTemp = `${marker}.${dead}.00000000-0000-7000-8000-000000000004.tmp`
+    await writeFile(markerTemp, 'DSH_REFRESH_LOCK_V2\n', { mode: 0o600 })
+
+    await expect(prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })).rejects.toMatchObject({ code: 'STORAGE_CONFLICT' })
+    expect((await stat(marker)).nlink).toBe(2)
+    expect(await readFile(markerTemp, 'utf8')).toBe('DSH_REFRESH_LOCK_V2\n')
+  })
+
+  it('waits for an active refresh before it moves the storage directory', async () => {
+    const home = await temporaryDirectory()
+    const source = join(home, 'remote')
+    await new IdentityStore({ directory: source }).loadOrCreate('Host')
+    let entered!: () => void
+    let release!: () => void
+    const started = new Promise<void>(resolve => { entered = resolve })
+    const finish = new Promise<void>(resolve => { release = resolve })
+    const refresh = new ServerCredentialStore(source).withRefreshLock(async () => {
+      entered()
+      await finish
+    })
+    await started
+    const moving = prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })
+    await new Promise(resolve => setTimeout(resolve, 100))
+    await expect(stat(join(home, 'ds-harness-remote'))).rejects.toMatchObject({ code: 'ENOENT' })
+    release()
+    await refresh
+    expect(await moving).toBe(join(home, 'ds-harness-remote'))
+  })
+
+  it('holds the migration gate while a default identity reset clears credentials', async () => {
+    const home = await temporaryDirectory()
+    const target = join(home, 'ds-harness-remote')
+    await new IdentityStore({ directory: target }).loadOrCreate('Host')
+    let enteredClear!: () => void
+    let releaseClear!: () => void
+    const clearing = new Promise<void>(resolve => { enteredClear = resolve })
+    const finishClear = new Promise<void>(resolve => { releaseClear = resolve })
+    const originalClear = ServerCredentialStore.prototype.clear
+    const clear = vi.spyOn(ServerCredentialStore.prototype, 'clear')
+    clear.mockImplementation(async function (this: ServerCredentialStore) {
+      enteredClear()
+      await finishClear
+      return originalClear.call(this)
+    })
+    try {
+      const reset = resetDefaultIdentityRoles(['host'], undefined, 'New Host', { env: { DSH_HOME: home } })
+      await clearing
+      let enteredRefresh = false
+      const refresh = new ServerCredentialStore(target).withRefreshLock(async () => { enteredRefresh = true })
+      await new Promise(resolve => setTimeout(resolve, 100))
+      expect(enteredRefresh).toBe(false)
+      releaseClear()
+      expect(await reset).toBe(target)
+      await refresh
+      expect(enteredRefresh).toBe(true)
+    } finally {
+      releaseClear()
+      clear.mockRestore()
+    }
   })
 
   it('keeps using verified legacy identities, trust and authorization when the directory move fails', async () => {
@@ -402,7 +543,7 @@ describe('IdentityStore', () => {
       await store.trustPeer({ deviceId: original.deviceId, name: 'Peer', platform: 'linux', publicKey: original.publicKey })
       const credentials = await new ServerCredentialStore(source).save({ serverUrl: 'https://first.example.com', deviceId: original.deviceId, authorizationMethod: 'owned_device', accessToken: 'fixture-access-token', accessTokenExpiresAt: 1, refreshToken: 'fixture-refresh-token', refreshTokenExpiresAt: 2 })
       const bytes = await readFile(join(source, 'server-credentials.json'))
-      vi.mocked(rename).mockRejectedValueOnce(Object.assign(new Error('move unavailable'), { code }))
+      await mockMoveFailure(source, join(home, 'ds-harness-remote'), code)
       expect(await prepareDefaultIdentityDirectory({ env }), code).toBe(source)
       // A subsequent default-store load must adopt the fallback, without retrying
       // the move or creating a replacement identity at the canonical path.
@@ -421,7 +562,7 @@ describe('IdentityStore', () => {
       const home = await temporaryDirectory()
       const source = join(home, 'remote')
       const original = await new IdentityStore({ directory: source }).loadOrCreate('Host')
-      vi.mocked(rename).mockRejectedValueOnce(Object.assign(new Error('move unavailable'), { code: 'EACCES' }))
+      await mockMoveFailure(source, join(home, 'ds-harness-remote'), 'EACCES')
       await prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })
       const pinPath = join(home, '.ds-harness-remote-migration', 'legacy-root.json')
       if (scenario === 'float-pin') {
@@ -742,7 +883,7 @@ describe('IdentityStore', () => {
         await writeFile(join(directory, 'trusted-peers.json'), '{corrupt-peers-json')
       }
       if (scenario === 'unknown-file') {
-        await writeFile(join(directory, 'server-credentials.json.bak'), 'keep-me')
+        await writeFile(join(directory, 'foreign.bak'), 'keep-me')
       }
       if (scenario === 'unexpected-servers-dir') {
         await mkdir(join(directory, 'servers'), { recursive: true })
@@ -765,6 +906,143 @@ describe('IdentityStore', () => {
         expect(await readFile(join(directory, name)), `${scenario}:${name}`).toEqual(bytes)
       }
     }
+  })
+
+  it.each(['.DS_Store', 'desktop.ini', 'Thumbs.db', 'DESKTOP.INI', 'THUMBS.DB'])(
+    'keeps plain OS metadata %s at every level and migrates identities unchanged',
+    async name => {
+      const home = await temporaryDirectory()
+      const source = join(home, 'remote')
+      const host = serverStorageDirectory(source, 'https://example.com', 'host')
+      const client = serverStorageDirectory(source, 'https://example.com', 'client')
+      const first = await new IdentityStore({ directory: host }).loadOrCreate('Host')
+      const second = await new IdentityStore({ directory: client, role: 'client' }).loadOrCreate('Client')
+      const levels = [source, join(source, 'servers'), dirname(host), host, client]
+      for (const level of levels) await writeFile(join(level, name), 'metadata')
+
+      const target = await prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })
+      expect(target).toBe(join(home, 'ds-harness-remote'))
+      for (const level of levels) {
+        expect(await readFile(join(level.replace(source, target), name), 'utf8')).toBe('metadata')
+      }
+      expect(await new IdentityStore({ directory: host.replace(source, target) }).loadOrCreate('Host')).toEqual(first)
+      expect(await new IdentityStore({ directory: client.replace(source, target), role: 'client' }).loadOrCreate('Client')).toEqual(second)
+    },
+  )
+
+  it('keeps plain OS metadata compatible with a flat legacy identity and client self-heal', async () => {
+    for (const role of ['flat', 'client'] as const) {
+      const home = await temporaryDirectory()
+      const source = join(home, 'remote')
+      const directory = role === 'flat' ? source : serverStorageDirectory(source, 'https://example.com', role)
+      await new IdentityStore({ directory, role: role === 'flat' ? 'host' : role }).loadOrCreate('Device')
+      await writeFile(join(directory, '.DS_Store'), 'metadata')
+      if (role === 'client') await rm(join(directory, 'device.key'))
+      const target = await prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })
+      await expect(new IdentityStore({ directory: directory.replace(source, target), role: role === 'flat' ? 'host' : role }).loadOrCreate('Device'))
+        .resolves.toHaveProperty('deviceId')
+    }
+  })
+
+  it.each(['.DS_Store', 'desktop.ini', 'Thumbs.db'])(
+    'client self-heal only tolerates plain metadata %s and keeps stored bytes otherwise',
+    async name => {
+      for (const kind of ['file', 'directory', 'hardlink', 'oversized'] as const) {
+        const directory = await temporaryDirectory()
+        await new IdentityStore({ directory, role: 'client' }).loadOrCreate('Client')
+        const original = await readFile(join(directory, 'device.json'))
+        await rm(join(directory, 'device.key'))
+        const artifact = join(directory, name)
+        if (kind === 'directory') await mkdir(artifact)
+        else if (kind === 'hardlink') await link(join(directory, 'device.json'), artifact)
+        else {
+          await writeFile(artifact, 'metadata')
+          if (kind === 'oversized') await truncate(artifact, 16 * 1024 * 1024 + 1)
+        }
+        const loaded = new IdentityStore({ directory, role: 'client' }).loadOrCreate('Client')
+        if (kind === 'file') await expect(loaded).resolves.toHaveProperty('deviceId')
+        else {
+          await expect(loaded).rejects.toMatchObject({ code: 'IDENTITY_INVALID' })
+          expect(await readFile(join(directory, 'device.json'))).toEqual(original)
+        }
+      }
+    },
+  )
+
+  it('still rejects metadata names used by directories, links, oversized files and unknown content', async () => {
+    for (const level of ['root', 'servers', 'scope', 'role'] as const) {
+      for (const kind of ['directory', 'symlink', 'hardlink', 'oversized', 'unknown', 'appledouble'] as const) {
+        const home = await temporaryDirectory()
+        const source = join(home, 'remote')
+        const host = serverStorageDirectory(source, 'https://example.com', 'host')
+        await new IdentityStore({ directory: host }).loadOrCreate('Host')
+        const directory = { root: source, servers: join(source, 'servers'), scope: dirname(host), role: host }[level]
+        const artifact = join(directory, kind === 'unknown' ? 'foreign.txt' : kind === 'appledouble' ? '._foreign' : '.DS_Store')
+        if (kind === 'directory') await mkdir(artifact)
+        else if (kind === 'symlink') await symlink(home, artifact, process.platform === 'win32' ? 'junction' : 'dir')
+        else if (kind === 'hardlink') await link(join(host, 'device.json'), artifact)
+        else {
+          await writeFile(artifact, 'keep')
+          if (kind === 'oversized') await truncate(artifact, 16 * 1024 * 1024 + 1)
+        }
+        await expect(prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } }), `${level}:${kind}`)
+          .rejects.toMatchObject({ code: 'STORAGE_CONFLICT' })
+        await expect(stat(source)).resolves.toBeDefined()
+      }
+    }
+  })
+
+  it.each([
+    'server-credentials.json.bak',
+    'server-credentials.json.bak-1793870140999',
+    'server-credentials.json.old',
+    'server-credentials.json.orig',
+    'server-credentials.json~',
+    'server-credentials.json.swp',
+  ])('preserves known credential backups during migration: %s', async name => {
+    const home = await temporaryDirectory()
+    const source = join(home, 'remote')
+    const directory = serverStorageDirectory(source, 'https://example.com', 'host')
+    const identity = await new IdentityStore({ directory }).loadOrCreate('Host')
+    await writeFile(join(directory, name), 'backup-bytes')
+
+    const target = await prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } })
+    const migrated = directory.replace(source, target)
+    expect(await readFile(join(migrated, name), 'utf8')).toBe('backup-bytes')
+    expect(await new IdentityStore({ directory: migrated }).loadOrCreate('Host')).toEqual(identity)
+  })
+
+  it('rejects unsafe known backup artifacts during migration', async () => {
+    for (const kind of ['directory', 'symlink', 'hardlink', 'oversized'] as const) {
+      const home = await temporaryDirectory()
+      const source = join(home, 'remote')
+      const directory = serverStorageDirectory(source, 'https://example.com', 'host')
+      await new IdentityStore({ directory }).loadOrCreate('Host')
+      const artifact = join(directory, 'server-credentials.json.bak')
+      if (kind === 'directory') await mkdir(artifact)
+      else if (kind === 'symlink') await symlink(home, artifact, process.platform === 'win32' ? 'junction' : 'dir')
+      else if (kind === 'hardlink') await link(join(directory, 'device.json'), artifact)
+      else {
+        await writeFile(artifact, 'oversized')
+        await truncate(artifact, 16 * 1024 * 1024 + 1)
+      }
+
+      await expect(prepareDefaultIdentityDirectory({ env: { DSH_HOME: home } }), kind)
+        .rejects.toMatchObject({ code: 'STORAGE_CONFLICT' })
+      await expect(stat(source)).resolves.toBeDefined()
+    }
+  })
+
+  it('allows known backups while healing an unpaired client identity', async () => {
+    const directory = await temporaryDirectory()
+    const store = new IdentityStore({ directory, role: 'client' })
+    const original = await store.loadOrCreate('Client')
+    await rm(join(directory, 'device.key'))
+    await writeFile(join(directory, 'device.json.bak-1793870140999'), 'backup-bytes')
+
+    const healed = await new IdentityStore({ directory, role: 'client' }).loadOrCreate('Client')
+    expect(healed.deviceId).not.toBe(original.deviceId)
+    expect(await readFile(join(directory, 'device.json.bak-1793870140999'), 'utf8')).toBe('backup-bytes')
   })
 })
 

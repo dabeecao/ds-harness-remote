@@ -8772,14 +8772,14 @@ function addressFromSocket(socket) {
   return [socket.remoteAddress, socket.remotePort];
 }
 async function waitForListening(server, host, port) {
-  return await new Promise((resolve9, reject) => {
+  return await new Promise((resolve10, reject) => {
     const onError = (error62) => {
       server.off("listening", onListening);
       reject(error62);
     };
     const onListening = () => {
       server.off("error", onError);
-      resolve9();
+      resolve10();
     };
     server.once("error", onError);
     server.once("listening", onListening);
@@ -10109,18 +10109,18 @@ function normalizeCandidateUfrag(message) {
   return { ...init, usernameFragment: fromString };
 }
 function settledState(event, current, done) {
-  return new Promise((resolve9) => {
+  return new Promise((resolve10) => {
     if (done(current()) || event.ended) {
-      resolve9(current());
+      resolve10(current());
       return;
     }
     const { unSubscribe } = event.subscribe(
       (state2) => {
         if (!done(state2)) return;
         unSubscribe();
-        resolve9(state2);
+        resolve10(state2);
       },
-      () => resolve9(current())
+      () => resolve10(current())
     );
   });
 }
@@ -10635,7 +10635,7 @@ var init_lib = __esm({
           error62
         );
       };
-      watch = (cb, timeLimit) => new Promise((resolve9, reject) => {
+      watch = (cb, timeLimit) => new Promise((resolve10, reject) => {
         const timeout = timeLimit && setTimeout(() => {
           reject("Event watch timeout");
         }, timeLimit);
@@ -10644,22 +10644,22 @@ var init_lib = __esm({
           if (done) {
             if (timeout) clearTimeout(timeout);
             unSubscribe();
-            resolve9(args);
+            resolve10(args);
           }
         });
       });
-      asPromise = (timeLimit) => new Promise((resolve9, reject) => {
+      asPromise = (timeLimit) => new Promise((resolve10, reject) => {
         const timeout = timeLimit && setTimeout(() => {
           reject("Event asPromise timeout");
         }, timeLimit);
         this.once(
           (...args) => {
             if (timeout) clearTimeout(timeout);
-            resolve9(args);
+            resolve10(args);
           },
           () => {
             if (timeout) clearTimeout(timeout);
-            resolve9([]);
+            resolve10([]);
           },
           (err5) => {
             if (timeout) clearTimeout(timeout);
@@ -10961,7 +10961,7 @@ var init_lib = __esm({
         if (this.closed) {
           throw new Error("udp transport closed");
         }
-        await new Promise((resolve9, reject) => {
+        await new Promise((resolve10, reject) => {
           let settled = false;
           const settle2 = (error62) => {
             if (settled) return;
@@ -10969,7 +10969,7 @@ var init_lib = __esm({
             this.socket.off("listening", onListening);
             this.socket.off("error", onBindError);
             this.socket.off("close", onClose);
-            error62 ? reject(error62) : resolve9();
+            error62 ? reject(error62) : resolve10();
           };
           const onListening = () => {
             this.listening = true;
@@ -11167,7 +11167,7 @@ var init_lib = __esm({
         }
         const client = this.createClient();
         this.client = client;
-        this.connecting = new Promise((resolve9, reject) => {
+        this.connecting = new Promise((resolve10, reject) => {
           let settled = false;
           const settle2 = (error62) => {
             if (settled) return;
@@ -11176,7 +11176,7 @@ var init_lib = __esm({
             client.off(this.connectEvent, onConnect);
             client.off("error", onConnectError);
             this.rejectConnecting = void 0;
-            error62 ? reject(error62) : resolve9();
+            error62 ? reject(error62) : resolve10();
           };
           const onConnect = () => {
             settle2();
@@ -11223,13 +11223,13 @@ var init_lib = __esm({
       send = async (data2, addr) => {
         void addr;
         await this.connecting;
-        await new Promise((resolve9, reject) => {
+        await new Promise((resolve10, reject) => {
           this.client.write(data2, (err5) => {
             if (err5) {
               reject(err5);
               return;
             }
-            resolve9();
+            resolve10();
           });
         });
       };
@@ -18480,10 +18480,10 @@ var init_lib = __esm({
       }
     };
     cancelable = (ex) => {
-      let resolve9;
+      let resolve10;
       let reject;
       const p = new Promise((r, f) => {
-        resolve9 = r;
+        resolve10 = r;
         reject = f;
       });
       p.then(() => {
@@ -18494,9 +18494,9 @@ var init_lib = __esm({
         onCancel.complete();
       });
       const onCancel = new Event2();
-      ex(resolve9, reject, onCancel).catch(() => {
+      ex(resolve10, reject, onCancel).catch(() => {
       });
-      return { awaitable: p, resolve: resolve9, reject };
+      return { awaitable: p, resolve: resolve10, reject };
     };
     COOKIE = 554869826;
     FINGERPRINT_LENGTH = 8;
@@ -18989,21 +18989,21 @@ var init_lib = __esm({
           clearTimeout(this.waitTimer);
           this.waitTimer = void 0;
         }
-        const resolve9 = this.waitResolve;
+        const resolve10 = this.waitResolve;
         this.waitResolve = void 0;
-        resolve9?.();
+        resolve10?.();
       }
       wait(ms) {
-        return new Promise((resolve9) => {
+        return new Promise((resolve10) => {
           if (this.ended || this.signal?.aborted) {
-            resolve9();
+            resolve10();
             return;
           }
-          this.waitResolve = resolve9;
+          this.waitResolve = resolve10;
           this.waitTimer = setTimeout(() => {
             this.waitTimer = void 0;
             this.waitResolve = void 0;
-            resolve9();
+            resolve10();
           }, ms);
         });
       }
@@ -19284,13 +19284,13 @@ var init_lib = __esm({
       async sendFrame(data2, addr) {
         const entry = await this.getSocket(addr);
         try {
-          await new Promise((resolve9, reject) => {
+          await new Promise((resolve10, reject) => {
             entry.socket.write(encodeTcpFrame(data2), (error62) => {
               if (error62) {
                 reject(error62);
                 return;
               }
-              resolve9();
+              resolve10();
             });
           });
         } catch (error62) {
@@ -19373,7 +19373,7 @@ var init_lib = __esm({
         if (pending) {
           return await pending;
         }
-        const connecting = new Promise((resolve9, reject) => {
+        const connecting = new Promise((resolve10, reject) => {
           const socket = connect3({
             host: addr[0],
             port: addr[1],
@@ -19386,7 +19386,7 @@ var init_lib = __esm({
           };
           const onConnect = () => {
             socket.off("error", onError);
-            resolve9(entry);
+            resolve10(entry);
           };
           socket.once("error", onError);
           socket.once("connect", onConnect);
@@ -19435,8 +19435,8 @@ var init_lib = __esm({
       }
       async close() {
         await super.close();
-        await new Promise((resolve9) => {
-          this.server.close(() => resolve9());
+        await new Promise((resolve10) => {
+          this.server.close(() => resolve10());
         });
       }
     };
@@ -20091,8 +20091,8 @@ var init_lib = __esm({
     Connection = class {
       constructor(_iceControlling, options) {
         this._iceControlling = _iceControlling;
-        this.closedSignal = new Promise((resolve9) => {
-          this.signalClosed = resolve9;
+        this.closedSignal = new Promise((resolve10) => {
+          this.signalClosed = resolve10;
         });
         this.options = {
           ...defaultOptions,
@@ -21058,8 +21058,8 @@ var init_lib = __esm({
               serverReflexiveCandidate(protocol, stunServer).catch(
                 () => void 0
               ),
-              new Promise((resolve9) => {
-                timer2 = setTimeout(() => resolve9(void 0), timeout * 1e3);
+              new Promise((resolve10) => {
+                timer2 = setTimeout(() => resolve10(void 0), timeout * 1e3);
               })
             ]);
             clearTimeout(timer2);
@@ -21325,14 +21325,14 @@ var init_lib = __esm({
         return this.consentFresh;
       }
       abortableDelay(ms, signal) {
-        return new Promise((resolve9, reject) => {
+        return new Promise((resolve10, reject) => {
           if (signal.aborted) {
             reject(new DOMException("The operation was aborted", "AbortError"));
             return;
           }
           const timer2 = setTimeout(() => {
             signal.removeEventListener("abort", onAbort);
-            resolve9();
+            resolve10();
           }, ms);
           const onAbort = () => {
             clearTimeout(timer2);
@@ -23359,8 +23359,8 @@ var init_lib = __esm({
           this.outboundStreamSeq[streamId] = uint16Add(streamSeqNum, 1);
         }
         const lastChunk = chunks[chunks.length - 1];
-        const sent = lastChunk && !this.isStopped ? new Promise((resolve9) => {
-          this.sendWaiters.push({ chunk: lastChunk, resolve: resolve9 });
+        const sent = lastChunk && !this.isStopped ? new Promise((resolve10) => {
+          this.sendWaiters.push({ chunk: lastChunk, resolve: resolve10 });
         }) : void 0;
         await this.transmit();
         await sent;
@@ -29335,9 +29335,9 @@ var init_lib = __esm({
           this.settlePendingRtp(item);
         }
       }
-      enqueuePendingRtp(rtp, resolve9, reject) {
+      enqueuePendingRtp(rtp, resolve10, reject) {
         const packet = Buffer.isBuffer(rtp) ? RtpPacket.deSerialize(rtp) : rtp.clone();
-        this.pendingRtp.push({ packet, resolve: resolve9, reject });
+        this.pendingRtp.push({ packet, resolve: resolve10, reject });
         while (this.pendingRtp.length > this.pendingRtpMaxLength) {
           const dropped = this.pendingRtp.shift();
           if (dropped) {
@@ -29540,8 +29540,8 @@ var init_lib = __esm({
           await this.dispatchRtp(rtp);
           return;
         }
-        await new Promise((resolve9, reject) => {
-          this.enqueuePendingRtp(rtp, resolve9, reject);
+        await new Promise((resolve10, reject) => {
+          this.enqueuePendingRtp(rtp, resolve10, reject);
           void this.drainPendingRtp();
         });
       }
@@ -31851,7 +31851,7 @@ var init_lib = __esm({
       async close() {
         if (this.sctpTransport) {
           await this.sctpTransport.stop();
-          await new Promise((resolve9) => setImmediate(resolve9));
+          await new Promise((resolve10) => setImmediate(resolve10));
         }
         this.onDataChannel.allUnsubscribe();
       }
@@ -33818,11 +33818,11 @@ var init_lib = __esm({
         const previous = this.descriptionTail;
         let releaseDone;
         let releaseApplied;
-        const done = new Promise((resolve9) => {
-          releaseDone = resolve9;
+        const done = new Promise((resolve10) => {
+          releaseDone = resolve10;
         });
-        const applied = new Promise((resolve9) => {
-          releaseApplied = resolve9;
+        const applied = new Promise((resolve10) => {
+          releaseApplied = resolve10;
         });
         this.descriptionTail = afterApplied ? {
           done: Promise.all([previous.done, done]).then(() => void 0),
@@ -34394,7 +34394,7 @@ var init_lib = __esm({
             this.negotiationNeed.discardPendingOffer();
             this.negotiationNeed.recheck = true;
             this.setSignalingState("stable");
-            await new Promise((resolve9) => setImmediate(resolve9));
+            await new Promise((resolve10) => setImmediate(resolve10));
             this.assertOpenAfterYield();
           }
           if (remoteSdp.type === "offer" && this.signalingState === "have-remote-offer") {
@@ -44546,10 +44546,10 @@ var require_browser = __commonJS({
           text = canvas;
           canvas = void 0;
         }
-        return new Promise(function(resolve9, reject) {
+        return new Promise(function(resolve10, reject) {
           try {
             const data2 = QRCode.create(text, opts);
-            resolve9(renderFunc(data2, canvas, opts));
+            resolve10(renderFunc(data2, canvas, opts));
           } catch (e) {
             reject(e);
           }
@@ -44630,11 +44630,11 @@ var require_server = __commonJS({
     }
     function render(renderFunc, text, params) {
       if (!params.cb) {
-        return new Promise(function(resolve9, reject) {
+        return new Promise(function(resolve10, reject) {
           try {
             const data2 = QRCode.create(text, params.opts);
             return renderFunc(data2, params.opts, function(err5, data3) {
-              return err5 ? reject(err5) : resolve9(data3);
+              return err5 ? reject(err5) : resolve10(data3);
             });
           } catch (e) {
             reject(e);
@@ -49768,7 +49768,7 @@ var recursive = /* @__PURE__ */ new WeakMap();
 var NONE = 0;
 var ASSUMED = 1;
 var PROVEN = 2;
-function isRecursive(inst, stack, resolve9) {
+function isRecursive(inst, stack, resolve10) {
   const cached2 = recursive.get(inst);
   if (cached2 !== void 0)
     return cached2 ? PROVEN : NONE;
@@ -49778,7 +49778,7 @@ function isRecursive(inst, stack, resolve9) {
   let result = NONE;
   const check2 = (child) => {
     if (result !== PROVEN && child?._zod) {
-      const answer = isRecursive(child, stack, resolve9);
+      const answer = isRecursive(child, stack, resolve10);
       if (answer > result)
         result = answer;
     }
@@ -49789,7 +49789,7 @@ function isRecursive(inst, stack, resolve9) {
       const desc = Object.getOwnPropertyDescriptor(sh, key);
       if (spread && !desc.enumerable)
         continue;
-      const child = desc.get ? ASSUMED : desc.value?._zod ? isRecursive(desc.value, stack, resolve9) : NONE;
+      const child = desc.get ? ASSUMED : desc.value?._zod ? isRecursive(desc.value, stack, resolve10) : NONE;
       if (child > answer)
         answer = child;
     }
@@ -49853,7 +49853,7 @@ function isRecursive(inst, stack, resolve9) {
       break;
     // `$ZodLazy` caches its inner on the def, so a resolved edge is followed exactly
     case "lazy": {
-      const inner = def._cachedInner ?? (resolve9 ? inst._zod.innerType : void 0);
+      const inner = def._cachedInner ?? (resolve10 ? inst._zod.innerType : void 0);
       merge3(inner ? isRecursive(inner, stack, false) : ASSUMED);
       break;
     }
@@ -66116,13 +66116,13 @@ var RemoteClientCore = class {
     }
     const timeoutMs = typeof options === "number" ? options : callTimeoutMs(this.timeoutMs, options);
     const request = createRpcRequest(method, params);
-    const result = new Promise((resolve9, reject) => {
+    const result = new Promise((resolve10, reject) => {
       const timer2 = setTimeout(() => {
         this.rejectPending(request.id, new RemoteClientError("RPC_TIMEOUT", `RPC ${method} timed out after ${timeoutMs}ms`));
       }, timeoutMs);
       const pending = {
         method,
-        resolve: resolve9,
+        resolve: resolve10,
         reject,
         timer: timer2
       };
@@ -66272,7 +66272,7 @@ function attachSharedInFlight(entry, signal) {
     return Promise.reject(signal.reason ?? new DOMException("The operation was aborted.", "AbortError"));
   }
   entry.waiters += 1;
-  return new Promise((resolve9, reject) => {
+  return new Promise((resolve10, reject) => {
     let finished = false;
     const onAbort = () => {
       if (finished) return;
@@ -66289,7 +66289,7 @@ function attachSharedInFlight(entry, signal) {
         if (finished) return;
         finished = true;
         signal?.removeEventListener("abort", onAbort);
-        resolve9(cloneStructured(value));
+        resolve10(cloneStructured(value));
       },
       (error62) => {
         if (finished) return;
@@ -67105,7 +67105,7 @@ var AsyncValueQueue = class {
         continue;
       }
       if (this.closed) return;
-      const next = await new Promise((resolve9) => this.waiters.push(resolve9));
+      const next = await new Promise((resolve10) => this.waiters.push(resolve10));
       if (next.done) return;
       yield next.value;
     }
@@ -67799,11 +67799,11 @@ var AcpSessionTitles = class {
   }
 };
 function waitForTitle(delay, signal) {
-  return new Promise((resolve9) => {
+  return new Promise((resolve10) => {
     const finish = () => {
       clearTimeout(timer2);
       signal.removeEventListener("abort", finish);
-      resolve9();
+      resolve10();
     };
     const timer2 = setTimeout(finish, delay);
     signal.addEventListener("abort", finish, { once: true });
@@ -68796,7 +68796,7 @@ async function waitForRelayCapacity(socket) {
   while ((socket.bufferedAmount ?? 0) > 512 * 1024) {
     if (socket.readyState !== 1 || Date.now() - started > 1e4)
       throw new Error("Relay consumer is too slow or disconnected");
-    await new Promise((resolve9) => setTimeout(resolve9, 10));
+    await new Promise((resolve10) => setTimeout(resolve10, 10));
   }
   if (socket.readyState !== 1)
     throw new Error("Relay transport closed");
@@ -69264,8 +69264,8 @@ var RtcDataChannelTransport = class {
     if (this.connectPromise !== void 0)
       return this.connectPromise;
     this.armAbort(signal);
-    this.connectPromise = new Promise((resolve9, reject) => {
-      this.openResolve = resolve9;
+    this.connectPromise = new Promise((resolve10, reject) => {
+      this.openResolve = resolve10;
       this.openReject = reject;
       this.negotiateTimer = setTimeout(() => {
         void this.failOpenAfterStats(new RtcConnectError("RTC_CONNECT_TIMEOUT", `WebRTC negotiation timed out after ${this.negotiateTimeoutMs}ms.`));
@@ -69490,14 +69490,14 @@ var RtcDataChannelTransport = class {
       if (this.closed || this.opened)
         return;
       this.opened = true;
-      const resolve9 = this.openResolve;
+      const resolve10 = this.openResolve;
       this.clearNegotiation();
       void this.resolveSelectedTransport().then(() => {
         if (this.closed)
           return;
         this.openResolve = void 0;
         this.openReject = void 0;
-        resolve9?.();
+        resolve10?.();
       });
     };
     channel.onmessage = (event) => {
@@ -69625,9 +69625,9 @@ var RtcDataChannelTransport = class {
     this.lastBufferedAmount = 0;
   }
   async refreshStatsDiagnostics() {
-    const stats = [...await new Promise((resolve9, reject) => {
+    const stats = [...await new Promise((resolve10, reject) => {
       const timer2 = setTimeout(() => reject(new Error("WebRTC statistics timed out.")), 250);
-      Promise.resolve().then(() => this.pc.getStats()).then(resolve9, reject).finally(() => clearTimeout(timer2));
+      Promise.resolve().then(() => this.pc.getStats()).then(resolve10, reject).finally(() => clearTimeout(timer2));
     })];
     if (this.closed)
       return {};
@@ -69896,7 +69896,7 @@ function asError(error62) {
   return error62 instanceof Error ? error62 : new RtcConnectError("RTC_FAILED", "WebRTC negotiation failed.");
 }
 function sleep(ms) {
-  return new Promise((resolve9) => setTimeout(resolve9, ms));
+  return new Promise((resolve10) => setTimeout(resolve10, ms));
 }
 
 // packages/webrtc/dist/control-lease.js
@@ -70040,8 +70040,8 @@ var AdaptiveTransport = class extends BaseTransport {
     this.socket = new WebSocket(this.url);
     this.controlFrameLimits = {};
     this.socket.binaryType = "arraybuffer";
-    await new Promise((resolve9, reject) => {
-      this.readyResolve = resolve9;
+    await new Promise((resolve10, reject) => {
+      this.readyResolve = resolve10;
       this.readyReject = reject;
       const onAbort = () => this.failConnection(new Error("Adaptive connection was aborted"));
       this.options.signal?.addEventListener("abort", onAbort, { once: true });
@@ -70511,7 +70511,7 @@ var AdaptiveTransport = class extends BaseTransport {
   async fetchIceServers(connectionId, signal) {
     if (this.options.fetchIceServers === void 0)
       return [];
-    return new Promise((resolve9, reject) => {
+    return new Promise((resolve10, reject) => {
       const request = new AbortController();
       let settled = false;
       const finish = (error62, servers = []) => {
@@ -70523,7 +70523,7 @@ var AdaptiveTransport = class extends BaseTransport {
         if (error62)
           reject(error62);
         else
-          resolve9(servers);
+          resolve10(servers);
       };
       const onAbort = () => {
         finish(new Error("ICE configuration request was aborted"));
@@ -70573,7 +70573,7 @@ var AdaptiveTransport = class extends BaseTransport {
     const socket = new WebSocket(assignment.relayEndpoint);
     socket.binaryType = "arraybuffer";
     this.dataSocket = socket;
-    await new Promise((resolve9, reject) => {
+    await new Promise((resolve10, reject) => {
       const timer2 = setTimeout(() => {
         reject(new Error("Relay data attach timed out"));
         socket.close();
@@ -70595,7 +70595,7 @@ var AdaptiveTransport = class extends BaseTransport {
             }
             clearTimeout(timer2);
             this.dataReady = true;
-            resolve9();
+            resolve10();
             return;
           }
           void this.handleDataSocketFrame(data2.type, data2.payload).catch((error62) => {
@@ -70856,7 +70856,7 @@ function shortId(value) {
 }
 async function waitForCodexFrames(stream, signal) {
   if (signal?.aborted) throw new ClientModeError("RPC_ABORTED", "The Codex event poll was cancelled.");
-  await new Promise((resolve9, reject) => {
+  await new Promise((resolve10, reject) => {
     const previousWake = stream.wake;
     const timer2 = setTimeout(done, 25e3);
     const onAbort = () => {
@@ -70870,7 +70870,7 @@ async function waitForCodexFrames(stream, signal) {
     }
     function done() {
       cleanup();
-      resolve9();
+      resolve10();
     }
     stream.wake = () => {
       previousWake();
@@ -78217,7 +78217,7 @@ var ClientSecureTransport = class {
   }
 };
 async function waitForResponder(inner, noise, signal) {
-  await new Promise((resolve9, reject) => {
+  await new Promise((resolve10, reject) => {
     let settled = false;
     let unsubscribe = () => {
     };
@@ -78232,7 +78232,7 @@ async function waitForResponder(inner, noise, signal) {
       unsubscribe();
       unsubscribeClose();
       signal.removeEventListener("abort", onAbort);
-      if (error62 === void 0) resolve9();
+      if (error62 === void 0) resolve10();
       else reject(error62);
     };
     unsubscribe = inner.onHandshake((step, data2) => {
@@ -78477,11 +78477,11 @@ var ClientReconnect = class {
   async run(connect4, pending) {
     while (!pending.signal.aborted) {
       const delay = Math.random() * this.config.maxDelayMs;
-      await new Promise((resolve9) => {
+      await new Promise((resolve10) => {
         const finish = () => {
           clearTimeout(timer2);
           pending.signal.removeEventListener("abort", finish);
-          resolve9();
+          resolve10();
         };
         const timer2 = setTimeout(finish, delay);
         pending.signal.addEventListener("abort", finish, { once: true });
@@ -78565,6 +78565,7 @@ var SAFE_STATIC_STARTUP_MESSAGES = /* @__PURE__ */ new Set([
   "Remote storage must be a real directory; symbolic links are not migrated.",
   "Remote storage contains a lock or symbolic link; stop all Harness instances and inspect it before migration."
 ]);
+var SAFE_STORAGE_CONFLICT_ENTRY_MESSAGE = /^Remote storage ownership could not be verified; nothing was moved\. Inspect the legacy directory manually\. Unexpected entry "[A-Za-z0-9._-]{1,160}" was found\.$/;
 function safeStartupError(error62) {
   const code = error62 instanceof Error && "code" in error62 && typeof error62.code === "string" && SAFE_STARTUP_CODES.has(error62.code) ? error62.code : safeErrorCode(error62);
   if (code === "SERVER_CREDENTIALS_INVALID") {
@@ -78573,12 +78574,12 @@ function safeStartupError(error62) {
   if (code === "SERVER_CREDENTIALS_BUSY") {
     return {
       code,
-      message: "Credential refresh is locked. Stop other instances; after a crash, stop all instances before removing server-credentials.json.refresh-lock and authorizing again."
+      message: "Credential refresh is busy. The Host will retry. Remove a legacy refresh lock only after every instance stops."
     };
   }
   if (code === "IDENTITY_INVALID" || code === "IDENTITY_LOCKED" || code === "STORAGE_CONFLICT") {
     const rawMessage = error62 instanceof Error ? error62.message : "";
-    if (SAFE_STATIC_STARTUP_MESSAGES.has(rawMessage) || /^private key permissions must be 0600, got [0-7]{3,4}$/.test(rawMessage)) {
+    if (SAFE_STATIC_STARTUP_MESSAGES.has(rawMessage) || SAFE_STORAGE_CONFLICT_ENTRY_MESSAGE.test(rawMessage) || /^private key permissions must be 0600, got [0-7]{3,4}$/.test(rawMessage)) {
       return { code, message: rawMessage };
     }
     if (rawMessage.startsWith("device identity is invalid")) {
@@ -78675,7 +78676,7 @@ var LoopbackHost = class {
         const response = handle.response;
         let chunk = response.read(Math.min(response.readableLength || LOOPBACK_CHUNK_BYTES, LOOPBACK_CHUNK_BYTES));
         if (chunk === null && !response.readableEnded && !response.destroyed) {
-          await new Promise((resolve9, reject) => {
+          await new Promise((resolve10, reject) => {
             const timer2 = setTimeout(() => finish(new Error("timeout")), 2e4);
             const ready = () => finish();
             const fail6 = () => finish(new Error("closed"));
@@ -78685,7 +78686,7 @@ var LoopbackHost = class {
               response.off("end", ready);
               response.off("close", ready);
               response.off("error", fail6);
-              error62 === void 0 ? resolve9() : reject(error62);
+              error62 === void 0 ? resolve10() : reject(error62);
             };
             response.once("readable", ready);
             response.once("end", ready);
@@ -78716,22 +78717,22 @@ var LoopbackHost = class {
           this.close(value.id);
           throw new RpcError("RATE_LIMITED", "Preview WebSocket buffer exceeded its limit.");
         }
-        await new Promise((resolve9, reject) => handle.socket.send(data2, { binary: value.binary }, (error62) => error62 ? reject(new RpcError("LOOPBACK_CLOSED", "Preview socket closed.")) : resolve9()));
+        await new Promise((resolve10, reject) => handle.socket.send(data2, { binary: value.binary }, (error62) => error62 ? reject(new RpcError("LOOPBACK_CLOSED", "Preview socket closed.")) : resolve10()));
         return { sent: true };
       }
       if (value.op === "ws.read") {
         if (handle.reading) throw new RpcError("REQUEST_CONFLICT", "Only one preview read may be pending.");
         handle.reading = true;
         try {
-          if (handle.messages.length === 0 && !handle.closed) await new Promise((resolve9) => {
+          if (handle.messages.length === 0 && !handle.closed) await new Promise((resolve10) => {
             const timer2 = setTimeout(() => {
               handle.wake = void 0;
-              resolve9();
+              resolve10();
             }, 2e4);
             handle.wake = () => {
               clearTimeout(timer2);
               handle.wake = void 0;
-              resolve9();
+              resolve10();
             };
           });
           let bytes = 0;
@@ -78778,7 +78779,7 @@ var LoopbackHost = class {
   openHttp(value) {
     const body = value.body === void 0 ? void 0 : Buffer.from(value.body, "base64");
     if ((body?.length ?? 0) > LOOPBACK_MAX_BODY_BYTES) throw new Error("body limit");
-    return new Promise((resolve9, reject) => {
+    return new Promise((resolve10, reject) => {
       const headers = Object.fromEntries(cleanHeaders(value.headers));
       let handle;
       const request = httpRequest({
@@ -78797,7 +78798,7 @@ var LoopbackHost = class {
         handle.response = response;
         response.on("error", () => void 0);
         clearTimeout(timer2);
-        resolve9({ status: response.statusCode ?? 502, headers: cleanHeaders(headerPairs(response.headers)) });
+        resolve10({ status: response.statusCode ?? 502, headers: cleanHeaders(headerPairs(response.headers)) });
       });
       const timer2 = setTimeout(() => {
         request.destroy();
@@ -78813,7 +78814,7 @@ var LoopbackHost = class {
     });
   }
   openWs(value) {
-    return new Promise((resolve9, reject) => {
+    return new Promise((resolve10, reject) => {
       const socket = new import_websocket.default(`ws://127.0.0.1:${value.port}${value.path}`, value.protocols, {
         headers: Object.fromEntries(cleanHeaders(value.headers)),
         followRedirects: false,
@@ -78823,7 +78824,7 @@ var LoopbackHost = class {
       });
       const handle = { kind: "ws", port: value.port, socket, messages: [], bytes: 0, reading: false, closed: false, touched: Date.now() };
       this.handles.set(value.id, handle);
-      socket.once("open", () => resolve9({ protocol: socket.protocol }));
+      socket.once("open", () => resolve10({ protocol: socket.protocol }));
       socket.on("message", (data2, binary) => {
         if (handle.closed) return;
         const message = { data: Buffer.from(data2).toString("base64"), binary };
@@ -78882,7 +78883,7 @@ var LoopbackPreview = class {
       for (const client of running.ws.clients) client.terminate();
       running.ws.close();
       running.server.closeAllConnections();
-      await new Promise((resolve9) => running.server.close(() => resolve9()));
+      await new Promise((resolve10) => running.server.close(() => resolve10()));
     }
     this.servers.clear();
   }
@@ -78937,11 +78938,11 @@ var LoopbackPreview = class {
         void this.release(id6);
       });
     });
-    await new Promise((resolve9, reject) => {
+    await new Promise((resolve10, reject) => {
       server.once("error", reject);
       server.listen(0, "127.0.0.1", () => {
         server.off("error", reject);
-        resolve9();
+        resolve10();
       });
     });
     const address2 = server.address();
@@ -79007,10 +79008,10 @@ var LoopbackPreview = class {
       while (!signal.aborted) {
         const chunk = await this.client.rpc("loopback.call", { op: "http.read", id: id6 }, signal);
         if (chunk.data !== "" && !res.write(Buffer.from(chunk.data, "base64"))) {
-          await new Promise((resolve9, reject) => {
+          await new Promise((resolve10, reject) => {
             const ready = () => {
               cleanup();
-              resolve9();
+              resolve10();
             };
             const closed = () => {
               cleanup();
@@ -79070,7 +79071,7 @@ var LoopbackPreview = class {
           const result = await this.client.rpc("loopback.call", { op: "ws.read", id: id6 }, signal);
           for (const message of result.messages) {
             if (socket.bufferedAmount > 1024 * 1024) throw new Error("slow preview");
-            await new Promise((resolve9, reject) => socket.send(Buffer.from(message.data, "base64"), { binary: message.binary }, (error62) => error62 ? reject(error62) : resolve9()));
+            await new Promise((resolve10, reject) => socket.send(Buffer.from(message.data, "base64"), { binary: message.binary }, (error62) => error62 ? reject(error62) : resolve10()));
           }
           if (result.closed) break;
         }
@@ -80298,7 +80299,7 @@ var AsyncValueQueue2 = class {
         continue;
       }
       if (this.closed) return;
-      const next = await new Promise((resolve9) => this.waiters.push(resolve9));
+      const next = await new Promise((resolve10) => this.waiters.push(resolve10));
       if (next.done) return;
       yield next.value;
     }
@@ -82244,13 +82245,13 @@ var CodexVirtualHarness = class _CodexVirtualHarness {
 function awaitWithAbort(promise2, signal) {
   if (signal === void 0) return promise2;
   signal.throwIfAborted();
-  return new Promise((resolve9, reject) => {
+  return new Promise((resolve10, reject) => {
     const onAbort = () => reject(signal.reason);
     signal.addEventListener("abort", onAbort, { once: true });
     promise2.then(
       (value) => {
         signal.removeEventListener("abort", onAbort);
-        resolve9(value);
+        resolve10(value);
       },
       (error62) => {
         signal.removeEventListener("abort", onAbort);
@@ -82389,7 +82390,7 @@ function writeText(res, status2, body) {
 // packages/plugin/src/harness-version.ts
 import { readFile, realpath as realpathEntrypoint } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { dirname, isAbsolute, join } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 var HARNESS_PACKAGE_NAME = "@deepseek-ai/dsh";
 function normalizeHarnessVersion(value) {
   if (typeof value !== "string") return void 0;
@@ -82470,6 +82471,19 @@ async function readHarnessDistributionVersion(entrypoint = process.argv[1], cont
     if (isAbsolute(resolvedEntrypoint)) {
       addAncestors(dirname(resolvedEntrypoint));
       addResolved(resolvedEntrypoint);
+    }
+  }
+  const rawCoreDir = (context.env ?? process.env).DSHM_CORE_DIR?.trim() ?? "";
+  if (rawCoreDir.length > 0) {
+    const dshmCoreDir = isAbsolute(rawCoreDir) ? rawCoreDir : resolve(cwd2, rawCoreDir);
+    addManifest(join(dshmCoreDir, "node_modules", HARNESS_PACKAGE_NAME, "package.json"));
+    addManifest(join(dshmCoreDir, "package.json"));
+  }
+  const moduleScope = context.moduleScope === void 0 ? import.meta.url : context.moduleScope;
+  if (typeof moduleScope === "string" && moduleScope.length > 0) {
+    try {
+      addManifest(createRequire(moduleScope).resolve(`${HARNESS_PACKAGE_NAME}/package.json`));
+    } catch {
     }
   }
   if (isAbsolute(execPath)) {
@@ -83006,7 +83020,7 @@ var RemoteTypertGateway2 = class {
       if (signal.aborted) return;
       if (resyncRequired || isRecord9(error62) && error62.isDSHRemoteError === true) throw error62;
       if (this.deferStreamDisconnect) {
-        await new Promise((resolve9) => signal.addEventListener("abort", () => resolve9(), { once: true }));
+        await new Promise((resolve10) => signal.addEventListener("abort", () => resolve10(), { once: true }));
         return;
       }
       throw error62;
@@ -83020,7 +83034,7 @@ var RemoteTypertGateway2 = class {
     signal.throwIfAborted();
     yield snapshot2;
     if (this.deferStreamDisconnect && !signal.aborted) {
-      await new Promise((resolve9) => signal.addEventListener("abort", () => resolve9(), { once: true }));
+      await new Promise((resolve10) => signal.addEventListener("abort", () => resolve10(), { once: true }));
     }
   }
   async *iterate(streamId, endpoint, queue, unsubscribe, unsubscribeClose, signal, onAbort, lifetime, transferSignal, disconnected, sessionId, fallbackSnapshot) {
@@ -83074,7 +83088,7 @@ var RemoteTypertGateway2 = class {
   async deferDisconnect(error62, disconnected, signal) {
     if (!this.deferStreamDisconnect || !disconnected || signal.aborted) return;
     if (isRecord9(error62) && error62.isDSHRemoteError === true) return;
-    await new Promise((resolve9) => signal.addEventListener("abort", () => resolve9(), { once: true }));
+    await new Promise((resolve10) => signal.addEventListener("abort", () => resolve10(), { once: true }));
   }
   async callTransferred(encoded, signal) {
     if (encoded.byteLength > MAX_HARNESS_API_TRANSFER_BYTES) {
@@ -83186,7 +83200,7 @@ var AsyncValueQueue4 = class {
         if (this.error !== void 0) throw this.error;
         return;
       }
-      const next = await new Promise((resolve9) => this.waiters.push(resolve9));
+      const next = await new Promise((resolve10) => this.waiters.push(resolve10));
       if (next.done) {
         if (this.error !== void 0) throw this.error;
         return;
@@ -83855,8 +83869,8 @@ var ObservedState = class {
 import { platform } from "node:os";
 
 // packages/plugin/src/server-credentials.ts
-import { chmod, mkdir as mkdir2, readFile as readFile2, rename, rm as rm2, stat, writeFile } from "node:fs/promises";
-import { dirname as dirname2, join as join3 } from "node:path";
+import { chmod, link, mkdir as mkdir2, readFile as readFile2, readdir, rename, rm as rm2, stat, writeFile } from "node:fs/promises";
+import { basename as basename3, dirname as dirname2, join as join3, sep } from "node:path";
 var credentialSchema = external_exports.object({
   schemaVersion: external_exports.literal(1),
   serverUrl: external_exports.string().url(),
@@ -83876,29 +83890,11 @@ var ServerCredentialStore = class {
   constructor(directory) {
     this.path = join3(directory, "server-credentials.json");
   }
-  /** Serialize the complete read/refresh/write transaction across processes.
-   * Never steal an old lock: a suspended owner may still consume a one-use token.
-   * After a crash, stop all instances before removing the orphaned lock.
-   */
+  /** Each process owns one queue record. A dead process cannot hold the queue. */
   async withRefreshLock(operation) {
-    const lock = `${this.path}.refresh-lock`;
-    await mkdir2(dirname2(this.path), { recursive: true, mode: 448 });
-    const deadline = Date.now() + 15e3;
-    for (; ; ) {
-      try {
-        await mkdir2(lock, { mode: 448 });
-        break;
-      } catch (error62) {
-        if (!(error62 instanceof Error) || !("code" in error62) || error62.code !== "EEXIST") throw error62;
-        if (Date.now() >= deadline) throw new ServerCredentialsBusyError();
-        await new Promise((resolve9) => setTimeout(resolve9, 50));
-      }
-    }
-    try {
-      return await operation();
-    } finally {
-      await rm2(lock, { recursive: true });
-    }
+    const gate = defaultMigrationGate(dirname2(this.path));
+    const run = () => withQueueLock(`${this.path}.refresh-lock`, operation);
+    return gate === void 0 ? run() : withQueueLock(gate, run);
   }
   async pairingHostOnly() {
     const policy = await readPrivateJson(join3(dirname2(this.path), "pairing-host-only.json"));
@@ -83930,15 +83926,161 @@ var ServerCredentialStore = class {
     await rm2(this.path, { force: true });
   }
 };
+function defaultMigrationGate(directory) {
+  const parts = directory.split(sep);
+  let rootIndex = -1;
+  for (let index = parts.length - 1; index >= 0; index--) {
+    if ((parts[index] === "remote" || parts[index] === "ds-harness-remote") && (index === parts.length - 1 || parts[index + 1] === "servers")) {
+      rootIndex = index;
+      break;
+    }
+  }
+  if (rootIndex < 1) return void 0;
+  const suffix = parts.slice(rootIndex + 1);
+  if (suffix.length !== 0 && (suffix.length !== 3 || suffix[0] !== "servers" || !/^[a-f0-9]{24}$/.test(suffix[1]) || !["host", "client"].includes(suffix[2]))) return void 0;
+  return join3(parts.slice(0, rootIndex).join(sep) || sep, ".ds-harness-remote-migration", "credential-refresh-gate");
+}
+function withDefaultCredentialMigrationGate(home, operation) {
+  return withQueueLock(join3(home, ".ds-harness-remote-migration", "credential-refresh-gate"), operation);
+}
+async function assertRefreshQueueIdle(directory) {
+  const lock = join3(directory, "server-credentials.json.refresh-lock");
+  const marker = await readQueueMarker(lock);
+  if (marker === void 0) {
+    if ((await readdir(directory)).some((name2) => name2.startsWith(`${basename3(lock)}.holder-`) && !name2.endsWith(".tmp"))) {
+      throw new ServerCredentialsBusyError();
+    }
+    return;
+  }
+  if (marker !== SERVER_CREDENTIALS_QUEUE_MARKER) throw new ServerCredentialsBusyError();
+  if ((await participants(lock)).length > 0) throw new ServerCredentialsBusyError();
+}
+async function withQueueLock(lock, operation) {
+  await mkdir2(dirname2(lock), { recursive: true, mode: 448 });
+  const deadline = Date.now() + 15e3;
+  await ensureQueueMarker(lock, deadline);
+  const id6 = `${process.pid}-${uuidV7()}`;
+  const holder = `${lock}.holder-${id6}`;
+  await publishExclusive(holder, `${id6} choosing
+`);
+  try {
+    const ticket = 1 + (await participants(lock)).reduce((max, entry) => Math.max(max, entry.ticket ?? 0), 0);
+    if (!Number.isSafeInteger(ticket)) throw new ServerCredentialsBusyError();
+    await atomicWritePrivate(holder, `${id6} ${ticket}
+`);
+    for (; ; ) {
+      const entries = await participants(lock);
+      const preceding = entries.some((entry) => entry.id !== id6 && (entry.ticket === void 0 || entry.ticket < ticket || entry.ticket === ticket && entry.id < id6));
+      if (!preceding) break;
+      if (Date.now() >= deadline) throw new ServerCredentialsBusyError();
+      await new Promise((resolve10) => setTimeout(resolve10, 50));
+    }
+    return await operation();
+  } finally {
+    await rm2(holder, { force: true });
+  }
+}
 var ServerCredentialsInvalidError = class extends Error {
   code = "SERVER_CREDENTIALS_INVALID";
 };
 var ServerCredentialsBusyError = class extends Error {
   code = "SERVER_CREDENTIALS_BUSY";
   constructor() {
-    super("Credential refresh is locked. Stop other instances; after a crash, stop all instances before removing server-credentials.json.refresh-lock and authorizing again.");
+    super("Credential refresh is busy. Stop other instances. Remove a legacy refresh lock only after every instance stops.");
   }
 };
+var ServerCredentialsLockUnsupportedError = class extends Error {
+  code = "SERVER_CREDENTIALS_LOCK_UNSUPPORTED";
+  constructor() {
+    super("Credential lock cannot create a hard link in DSH_HOME. Use a writable local ext4 or XFS file system.");
+  }
+};
+var SERVER_CREDENTIALS_QUEUE_MARKER = "DSH_REFRESH_LOCK_V2\n";
+async function ensureQueueMarker(lock, deadline) {
+  for (; ; ) {
+    try {
+      await publishExclusive(lock, SERVER_CREDENTIALS_QUEUE_MARKER);
+      return;
+    } catch (error62) {
+      if (!await isLockContention(error62, lock)) throw error62;
+      if (await readQueueMarker(lock) === SERVER_CREDENTIALS_QUEUE_MARKER) return;
+      if (Date.now() >= deadline) throw new ServerCredentialsBusyError();
+      await new Promise((resolve10) => setTimeout(resolve10, 50));
+    }
+  }
+}
+async function participants(lock) {
+  const prefix = `${basename3(lock)}.holder-`;
+  const entries = await readdir(dirname2(lock));
+  const result = [];
+  for (const name2 of entries) {
+    if (!name2.startsWith(prefix)) continue;
+    if (name2.endsWith(".tmp")) continue;
+    const id6 = name2.slice(prefix.length);
+    if (!/^\d+-[0-9a-f-]{36}$/.test(id6)) throw new ServerCredentialsBusyError();
+    const path = join3(dirname2(lock), name2);
+    const record11 = await readLockRecord(path);
+    if (record11 === void 0) continue;
+    const match = new RegExp(`^${id6} (choosing|[1-9]\\d*)\\n$`).exec(record11);
+    if (match === null) throw new ServerCredentialsBusyError();
+    const pid = Number(id6.slice(0, id6.indexOf("-")));
+    if (await ownerExited(pid)) {
+      await rm2(path, { force: true });
+      continue;
+    }
+    const ticket = match[1] === "choosing" ? void 0 : Number(match[1]);
+    if (ticket !== void 0 && !Number.isSafeInteger(ticket)) throw new ServerCredentialsBusyError();
+    result.push({ id: id6, ...ticket === void 0 ? {} : { ticket } });
+  }
+  return result;
+}
+async function publishExclusive(path, record11) {
+  const temporary = `${path}.${process.pid}.${uuidV7()}.tmp`;
+  await writeFile(temporary, record11, { mode: 384, flag: "wx" });
+  try {
+    try {
+      await link(temporary, path);
+    } catch (error62) {
+      if (error62 instanceof Error && "code" in error62 && ["EXDEV", "EOPNOTSUPP", "ENOTSUP", "ENOSYS", "EPERM", "EACCES"].includes(String(error62.code))) {
+        throw new ServerCredentialsLockUnsupportedError();
+      }
+      throw error62;
+    }
+  } finally {
+    await rm2(temporary, { force: true });
+  }
+}
+async function isLockContention(error62, path) {
+  if (!(error62 instanceof Error) || !("code" in error62)) return false;
+  if (error62.code === "EEXIST") return true;
+  if (process.platform !== "win32" || error62.code !== "EPERM") return false;
+  return exists(path);
+}
+async function readLockRecord(path) {
+  try {
+    return await readFile2(path, "utf8");
+  } catch (error62) {
+    if (error62 instanceof Error && "code" in error62 && error62.code === "ENOENT") return void 0;
+    throw error62;
+  }
+}
+async function readQueueMarker(lock) {
+  try {
+    return await readLockRecord(lock);
+  } catch (error62) {
+    if (error62 instanceof Error && "code" in error62 && error62.code === "EISDIR") return void 0;
+    throw error62;
+  }
+}
+async function ownerExited(pid) {
+  if (pid < 1 || pid > 2147483647 || pid === process.pid) return false;
+  try {
+    process.kill(pid, 0);
+    return false;
+  } catch (error62) {
+    return error62 instanceof Error && "code" in error62 && error62.code === "ESRCH";
+  }
+}
 async function atomicWritePrivate(path, contents) {
   await mkdir2(dirname2(path), { recursive: true, mode: 448 });
   const temporary = `${path}.${process.pid}.${uuidV7()}.tmp`;
@@ -84451,10 +84593,10 @@ function validateVolatileSchema(schema, path = [], blocked = false, seen = /* @_
   if (schema.inner && (schema.type !== "lazy" || schema.inner[kSchema])) validateVolatileSchema(schema.inner, [...path, "*"], true, seen);
   if (schema.list) for (let index = 0; index < schema.list.length; index++) validateVolatileSchema(schema.list[index], [...path, String(index)], true, seen);
 }
-Schema.extend = function extend2(type, resolve9) {
-  resolvers[type] = resolve9;
+Schema.extend = function extend2(type, resolve10) {
+  resolvers[type] = resolve10;
 };
-Schema.resolve = function resolve(data2, schema, options = {}, strict = false) {
+Schema.resolve = function resolve2(data2, schema, options = {}, strict = false) {
   if (!schema) return [data2];
   if (!options[checkedVolatile]) {
     validateVolatileSchema(schema, options.path);
@@ -84845,6 +84987,7 @@ var entryConfigSchema = Schema.object({
   enabled: Schema.boolean(),
   role: Schema.union(["host", "client", "both"]),
   serverUrl: Schema.string(),
+  httpServerAllowlist: Schema.array(Schema.string()),
   deviceName: Schema.string(),
   terminal: Schema.object({ enabled: Schema.boolean() }),
   remoteTools: Schema.object({ enabled: Schema.boolean() }),
@@ -84889,6 +85032,7 @@ var configSchema = external_exports.object({
   enabled: external_exports.boolean().optional(),
   role: external_exports.enum(["host", "client", "both"]).optional(),
   serverUrl: external_exports.string().url().optional(),
+  httpServerAllowlist: external_exports.array(external_exports.string().trim().min(1).max(128)).max(64).optional(),
   deviceName: external_exports.string().trim().min(1).max(80).optional(),
   terminal: external_exports.object({ enabled: external_exports.boolean().optional() }).strict().optional(),
   remoteTools: external_exports.object({ enabled: external_exports.boolean().optional() }).strict().optional(),
@@ -84919,7 +85063,10 @@ function resolveConfig(input4 = {}, env = process.env) {
   const acpEnabled = parsed.acp?.enabled ?? true;
   const reconnect = typeof parsed.reconnect === "object" ? parsed.reconnect : {};
   const configuredServerUrl = parsed.serverUrl ?? env.DSH_REMOTE_SERVER;
-  const serverUrl = configuredServerUrl === void 0 ? void 0 : normalizeServerUrl(configuredServerUrl);
+  const httpServerAllowlist = normalizeHttpServerAllowlist(
+    parsed.httpServerAllowlist ?? parseHttpServerAllowlistEnv(env.DSH_REMOTE_HTTP_SERVER_ALLOWLIST)
+  );
+  const serverUrl = configuredServerUrl === void 0 ? void 0 : normalizeServerUrl(configuredServerUrl, httpServerAllowlist);
   const initialDelayMs = reconnect.initialDelayMs ?? 4e3;
   const maxDelayMs = reconnect.maxDelayMs ?? 3e4;
   if (maxDelayMs < initialDelayMs) {
@@ -84929,6 +85076,7 @@ function resolveConfig(input4 = {}, env = process.env) {
     enabled: parsed.enabled ?? true,
     role: parsed.role ?? "host",
     ...serverUrl === void 0 ? {} : { serverUrl },
+    httpServerAllowlist,
     deviceName: parsed.deviceName ?? env.DSH_REMOTE_DEVICE_NAME ?? hostname3(),
     hostControl: { enabled: parsed.hostControl?.enabled ?? true },
     terminal: { enabled: parsed.terminal?.enabled ?? (env.DSH_REMOTE_TERMINAL_ENABLED === void 0 || env.DSH_REMOTE_TERMINAL_ENABLED === "true") },
@@ -84988,9 +85136,9 @@ function isPrivateNetworkHostname(hostname6) {
   const [a, b] = octets;
   return a === 10 || a === 172 && b >= 16 && b <= 31 || a === 192 && b === 168 || a === 169 && b === 254 || a === 100 && b >= 64 && b <= 127;
 }
-function normalizeServerUrl(value) {
+function normalizeServerUrl(value, httpServerAllowlist = []) {
   const url2 = new URL(value);
-  const privateHttp = url2.protocol === "http:" && isPrivateNetworkHostname(url2.hostname);
+  const privateHttp = url2.protocol === "http:" && (isPrivateNetworkHostname(url2.hostname) || matchesHttpServerAllowlist(url2.hostname, httpServerAllowlist));
   if (url2.protocol !== "https:" && !privateHttp) {
     throw new TypeError("serverUrl must use HTTPS (HTTP is allowed only for localhost or private-network addresses)");
   }
@@ -85005,6 +85153,88 @@ function normalizeServerUrl(value) {
   }
   return url2.origin;
 }
+function parseHttpServerAllowlistEnv(value) {
+  if (value === void 0) return void 0;
+  return value.split(",").map((item) => item.trim()).filter((item) => item !== "");
+}
+function normalizeHttpServerAllowlist(values) {
+  if (values === void 0) return [];
+  const normalized = [...new Set(values.map((value) => value.trim()).filter((value) => value !== ""))];
+  for (const value of normalized) {
+    if (!isValidHttpServerAllowlistEntry(value)) {
+      throw new TypeError(`httpServerAllowlist contains an invalid host or CIDR: ${value}`);
+    }
+  }
+  return normalized;
+}
+function isValidHttpServerAllowlistEntry(value) {
+  const slash = value.indexOf("/");
+  if (slash === -1) return parseIpAddress(value) !== void 0 || isAllowlistedHostname(value);
+  if (slash !== value.lastIndexOf("/")) return false;
+  const address2 = parseIpAddress(value.slice(0, slash));
+  const prefix = Number(value.slice(slash + 1));
+  return address2 !== void 0 && Number.isInteger(prefix) && prefix >= 0 && prefix <= (address2.version === 4 ? 32 : 128);
+}
+function isAllowlistedHostname(value) {
+  return value.length <= 253 && !value.startsWith(".") && !value.endsWith(".") && /^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?$/.test(value);
+}
+function matchesHttpServerAllowlist(hostname6, allowlist) {
+  const host = hostname6.startsWith("[") && hostname6.endsWith("]") ? hostname6.slice(1, -1) : hostname6;
+  const address2 = parseIpAddress(host);
+  const normalizedHost = host.toLowerCase();
+  return allowlist.some((entry) => {
+    const slash = entry.indexOf("/");
+    if (slash === -1) {
+      const exact = parseIpAddress(entry);
+      return exact === void 0 ? entry.toLowerCase() === normalizedHost : address2 !== void 0 && exact.version === address2.version && exact.value === address2.value;
+    }
+    if (address2 === void 0) return false;
+    const network = parseIpAddress(entry.slice(0, slash));
+    const prefix = Number(entry.slice(slash + 1));
+    if (network === void 0 || network.version !== address2.version) return false;
+    const bits = network.version === 4 ? 32n : 128n;
+    const mask = prefix === 0 ? 0n : (1n << BigInt(prefix)) - 1n << bits - BigInt(prefix);
+    return (network.value & mask) === (address2.value & mask);
+  });
+}
+function parseIpAddress(value) {
+  const normalized = value.startsWith("[") && value.endsWith("]") ? value.slice(1, -1) : value;
+  return parseIpv4(normalized) ?? parseIpv6(normalized);
+}
+function parseIpv4(value) {
+  const parts = value.split(".");
+  if (parts.length !== 4 || parts.some((part) => !/^\d{1,3}$/.test(part))) return void 0;
+  const octets = parts.map(Number);
+  if (octets.some((octet) => octet > 255)) return void 0;
+  return { version: 4, value: octets.reduce((result, octet) => result << 8n | BigInt(octet), 0n) };
+}
+function parseIpv6(value) {
+  const normalized = value.toLowerCase();
+  if (!normalized.includes(":") || normalized.includes("%")) return void 0;
+  const sections = normalized.split("::");
+  if (sections.length > 2) return void 0;
+  const expand = (section) => {
+    if (section === "") return [];
+    const parts = section.split(":");
+    const result = [];
+    for (const part of parts) {
+      if (part.includes(".")) {
+        const ipv43 = parseIpv4(part);
+        if (ipv43 === void 0) return void 0;
+        result.push(Number(ipv43.value >> 16n & 0xffffn), Number(ipv43.value & 0xffffn));
+      } else if (/^[0-9a-f]{1,4}$/.test(part)) {
+        result.push(Number.parseInt(part, 16));
+      } else return void 0;
+    }
+    return result;
+  };
+  const left = expand(sections[0]);
+  const right = expand(sections.length === 2 ? sections[1] : "");
+  if (left === void 0 || right === void 0) return void 0;
+  const hextets = sections.length === 2 ? [...left, ...Array(8 - left.length - right.length).fill(0), ...right] : left;
+  if (hextets.length !== 8) return void 0;
+  return { version: 6, value: hextets.reduce((result, hextet) => result << 16n | BigInt(hextet), 0n) };
+}
 
 // packages/plugin/src/version.ts
 var PLUGIN_VERSION = "0.6.4";
@@ -85012,11 +85242,11 @@ var PLUGIN_VERSION = "0.6.4";
 // packages/plugin/src/server-api.ts
 var TERMINAL_CONTROL_CHARACTERS = /[\u0000-\u001f\u007f-\u009f]/u;
 var HostServerApi = class {
-  constructor(serverUrl, store, fetchImplementation = fetch, role2 = "host") {
+  constructor(serverUrl, store, fetchImplementation = fetch, role2 = "host", httpServerAllowlist = []) {
     this.store = store;
     this.fetchImplementation = fetchImplementation;
     this.role = role2;
-    this.baseUrl = normalizeServerUrl(serverUrl);
+    this.baseUrl = normalizeServerUrl(serverUrl, httpServerAllowlist);
   }
   baseUrl;
   hostOnly = false;
@@ -85283,6 +85513,9 @@ var HostServerApi = class {
       return await this.store.withRefreshLock(operation);
     } catch (error62) {
       if (error62 instanceof ServerCredentialsBusyError) {
+        throw new ServerApiError(error62.code, error62.message, true);
+      }
+      if (error62 instanceof ServerCredentialsLockUnsupportedError) {
         throw new ServerApiError(error62.code, error62.message, false);
       }
       throw error62;
@@ -85502,8 +85735,8 @@ function normalizeOAuthScanUrl(value, baseUrl) {
   }
 }
 var ClientServerApi = class extends HostServerApi {
-  constructor(serverUrl, store, fetchImplementation = fetch) {
-    super(serverUrl, store, fetchImplementation, "client");
+  constructor(serverUrl, store, fetchImplementation = fetch, httpServerAllowlist = []) {
+    super(serverUrl, store, fetchImplementation, "client", httpServerAllowlist);
   }
 };
 var ServerApiError = class extends Error {
@@ -85687,8 +85920,8 @@ var Queue = class {
         this.bytes -= entry.bytes;
         yield entry.value;
       } else if (this.closed) break;
-      else await new Promise((resolve9) => {
-        this.wake = resolve9;
+      else await new Promise((resolve10) => {
+        this.wake = resolve10;
       });
     }
     if (this.error) throw this.error;
@@ -85761,8 +85994,8 @@ var TerminalCarrierCompat = class {
     const abort = () => entry.control.abort();
     signal.addEventListener("abort", abort, { once: true });
     try {
-      await new Promise((resolve9, reject) => {
-        entry.pending.set(sequence2, { resolve: resolve9, reject });
+      await new Promise((resolve10, reject) => {
+        entry.pending.set(sequence2, { resolve: resolve10, reject });
         try {
           entry.queue.push(value);
         } catch (error62) {
@@ -85799,8 +86032,8 @@ async function openRemoteTerminal(target3, payload, signal, uplink) {
     throw error62;
   }
   let startInput;
-  const ready = new Promise((resolve9) => {
-    startInput = resolve9;
+  const ready = new Promise((resolve10) => {
+    startInput = resolve10;
   });
   lifetime.addEventListener("abort", startInput, { once: true });
   if (lifetime.aborted) startInput();
@@ -86303,8 +86536,8 @@ var ExternalNativePeerConnection = class {
   request(method, payload) {
     if (this.closed) return Promise.reject(new Error("native rtc helper is closed"));
     const id6 = this.nextRequestId++;
-    const promise2 = new Promise((resolve9, reject) => {
-      this.pending.set(id6, { resolve: resolve9, reject });
+    const promise2 = new Promise((resolve10, reject) => {
+      this.pending.set(id6, { resolve: resolve10, reject });
     });
     this.write({ id: id6, method, payload });
     return promise2;
@@ -87098,10 +87331,10 @@ function parseRouteTarget(value) {
 async function detectRouteHostIpv4(target3, timeoutMs) {
   const socket = createSocket4("udp4");
   try {
-    return await new Promise((resolve9, reject) => {
+    return await new Promise((resolve10, reject) => {
       const timer2 = setTimeout(() => {
         cleanup();
-        resolve9(void 0);
+        resolve10(void 0);
       }, timeoutMs);
       const cleanup = () => {
         clearTimeout(timer2);
@@ -87115,7 +87348,7 @@ async function detectRouteHostIpv4(target3, timeoutMs) {
       socket.connect(target3.port, target3.host, () => {
         cleanup();
         const address2 = socket.address();
-        resolve9(typeof address2 === "string" ? void 0 : address2.address);
+        resolve10(typeof address2 === "string" ? void 0 : address2.address);
       });
     });
   } finally {
@@ -88235,9 +88468,9 @@ var savedPairingSchema = external_exports.object({
 
 // packages/plugin/src/identity-store.ts
 import { createHash as createHash5 } from "node:crypto";
-import { chmod as chmod2, lstat, mkdir as mkdir3, readFile as readFile3, readdir, rename as rename2, rm as rm3, stat as stat2, unlink, writeFile as writeFile2 } from "node:fs/promises";
+import { chmod as chmod2, lstat, mkdir as mkdir3, readFile as readFile3, readdir as readdir2, rename as rename2, rm as rm3, stat as stat2, unlink, writeFile as writeFile2 } from "node:fs/promises";
 import { homedir as homedir2 } from "node:os";
-import { basename as basename3, dirname as dirname4, join as join5 } from "node:path";
+import { basename as basename4, dirname as dirname4, join as join5 } from "node:path";
 var identitySchema = external_exports.object({
   schemaVersion: external_exports.literal(1),
   deviceId: external_exports.string().uuid(),
@@ -88258,6 +88491,8 @@ var trustedPeersSchema = external_exports.object({
   // Discovery can persist multiple pages; reading must accept every record we write.
   peers: external_exports.array(trustedPeerSchema)
 }).strict();
+var STORAGE_CONFLICT_MESSAGE = "Remote storage ownership could not be verified; nothing was moved. Inspect the legacy directory manually.";
+var STORAGE_CONFLICT_ENTRY_PATTERN = /^(?:device\.json|device\.key|trusted-peers\.json|server-credentials\.json|host-pairing\.json|pairing-host-only\.json)(?:\.bak(?:-[0-9]+)?|\.old|\.orig|~|\.swp)$/;
 var IdentityInvalidError = class extends Error {
   constructor(message, code = "IDENTITY_INVALID") {
     super(message);
@@ -88463,6 +88698,9 @@ function serializeStatId(value) {
 }
 async function prepareDefaultIdentityDirectory(options = {}) {
   if (options.directory !== void 0) return options.directory;
+  return withDefaultStorageTransaction(options, prepareDefaultIdentityDirectoryLocked);
+}
+async function withDefaultStorageTransaction(options, operation) {
   const env = options.env ?? process.env;
   const home = env.DSH_HOME || join5(options.homeDirectory ?? homedir2(), ".dsh");
   const source = join5(home, "remote");
@@ -88471,59 +88709,63 @@ async function prepareDefaultIdentityDirectory(options = {}) {
   const lockDirectory = join5(home, ".ds-harness-remote-migration");
   await storageDirectoryStat(lockDirectory);
   await ensureDirectory(lockDirectory);
-  return withIdentityLock(lockDirectory, async () => {
-    const old = await storageDirectoryStat(source);
-    const current = await storageDirectoryStat(target3);
-    const pinPath = join5(lockDirectory, "legacy-root.json");
-    const pinMetadata = await lstat(pinPath).catch((error62) => {
-      if (isNodeError(error62) && error62.code === "ENOENT") return void 0;
-      throw error62;
-    });
-    let pin;
-    if (pinMetadata !== void 0) {
-      if (!pinMetadata.isFile() || pinMetadata.isSymbolicLink() || pinMetadata.nlink !== 1 || pinMetadata.size > 4096) {
-        throw new IdentityInvalidError("Remote storage fallback record is invalid; no credentials were changed.", "STORAGE_CONFLICT");
-      }
-      await assertPrivateMode2(pinPath);
-      try {
-        pin = legacyRootPinSchema.parse(JSON.parse(await readFile3(pinPath, "utf8")));
-      } catch {
-        throw new IdentityInvalidError("Remote storage fallback record is invalid; no credentials were changed.", "STORAGE_CONFLICT");
-      }
+  return withIdentityLock(lockDirectory, () => withDefaultCredentialMigrationGate(
+    home,
+    () => operation({ source, target: target3, lockDirectory })
+  ));
+}
+async function prepareDefaultIdentityDirectoryLocked({ source, target: target3, lockDirectory }) {
+  const old = await storageDirectoryStat(source);
+  const current = await storageDirectoryStat(target3);
+  const pinPath = join5(lockDirectory, "legacy-root.json");
+  const pinMetadata = await lstat(pinPath).catch((error62) => {
+    if (isNodeError(error62) && error62.code === "ENOENT") return void 0;
+    throw error62;
+  });
+  let pin;
+  if (pinMetadata !== void 0) {
+    if (!pinMetadata.isFile() || pinMetadata.isSymbolicLink() || pinMetadata.nlink !== 1 || pinMetadata.size > 4096) {
+      throw new IdentityInvalidError("Remote storage fallback record is invalid; no credentials were changed.", "STORAGE_CONFLICT");
     }
-    if (old !== void 0) {
-      if (current !== void 0) {
-        throw new IdentityInvalidError("Both Remote storage directories exist; stop all Harness instances and resolve them manually. No credentials were overwritten.", "STORAGE_CONFLICT");
+    await assertPrivateMode2(pinPath);
+    try {
+      pin = legacyRootPinSchema.parse(JSON.parse(await readFile3(pinPath, "utf8")));
+    } catch {
+      throw new IdentityInvalidError("Remote storage fallback record is invalid; no credentials were changed.", "STORAGE_CONFLICT");
+    }
+  }
+  if (old !== void 0) {
+    if (current !== void 0) {
+      throw new IdentityInvalidError("Both Remote storage directories exist; stop all Harness instances and resolve them manually. No credentials were overwritten.", "STORAGE_CONFLICT");
+    }
+    await assertOwnedRemoteStorage(source);
+    await assertStorageIdle(source);
+    if (pin !== void 0) {
+      if (pin.dev !== old.dev || pin.ino !== old.ino) {
+        throw new IdentityInvalidError("Legacy Remote storage changed after fallback; inspect it before reconnecting.", "STORAGE_CONFLICT");
       }
+      return source;
+    }
+    try {
+      await rename2(source, target3);
+    } catch (error62) {
+      if (!isNodeError(error62) || !["EACCES", "EPERM", "EBUSY", "EXDEV", "EROFS", "EEXIST", "ENOTEMPTY", "ENOSPC", "EDQUOT"].includes(error62.code ?? "")) throw error62;
+      const remaining = await storageDirectoryStat(source);
+      if (remaining === void 0 || remaining.dev !== old.dev || remaining.ino !== old.ino || await storageDirectoryStat(target3) !== void 0) throw error62;
       await assertOwnedRemoteStorage(source);
       await assertStorageIdle(source);
-      if (pin !== void 0) {
-        if (pin.dev !== old.dev || pin.ino !== old.ino) {
-          throw new IdentityInvalidError("Legacy Remote storage changed after fallback; inspect it before reconnecting.", "STORAGE_CONFLICT");
-        }
-        return source;
-      }
-      try {
-        await rename2(source, target3);
-      } catch (error62) {
-        if (!isNodeError(error62) || !["EACCES", "EPERM", "EBUSY", "EXDEV", "EROFS", "EEXIST", "ENOTEMPTY", "ENOSPC", "EDQUOT"].includes(error62.code ?? "")) throw error62;
-        const remaining = await storageDirectoryStat(source);
-        if (remaining === void 0 || remaining.dev !== old.dev || remaining.ino !== old.ino || await storageDirectoryStat(target3) !== void 0) throw error62;
-        await assertOwnedRemoteStorage(source);
-        await assertStorageIdle(source);
-        await atomicJsonWrite(pinPath, {
-          schemaVersion: 1,
-          dev: serializeStatId(old.dev),
-          ino: serializeStatId(old.ino)
-        }, 384);
-        return source;
-      }
-    } else if (pin !== void 0) {
-      if (current === void 0) throw new IdentityInvalidError("Pinned Remote storage is missing; no replacement identity was created.", "STORAGE_CONFLICT");
-      await assertOwnedRemoteStorage(target3);
+      await atomicJsonWrite(pinPath, {
+        schemaVersion: 1,
+        dev: serializeStatId(old.dev),
+        ino: serializeStatId(old.ino)
+      }, 384);
+      return source;
     }
-    return target3;
-  });
+  } else if (pin !== void 0) {
+    if (current === void 0) throw new IdentityInvalidError("Pinned Remote storage is missing; no replacement identity was created.", "STORAGE_CONFLICT");
+    await assertOwnedRemoteStorage(target3);
+  }
+  return target3;
 }
 async function resetDefaultIdentityRoles(roles, serverUrl, deviceName, options = {}) {
   const createStore = options.createIdentityStore ?? ((storeOptions) => new IdentityStore(storeOptions));
@@ -88546,29 +88788,25 @@ async function resetDefaultIdentityRoles(roles, serverUrl, deviceName, options =
     await resetRolesInRoot(options.directory);
     return options.directory;
   }
-  try {
-    const root2 = await prepareDefaultIdentityDirectory(options);
-    await resetRolesInRoot(root2);
-    return root2;
-  } catch (error62) {
-    if (!(error62 instanceof IdentityInvalidError) || error62.code !== "IDENTITY_INVALID") {
-      throw error62;
+  return withDefaultStorageTransaction(options, async (paths) => {
+    try {
+      const root2 = await prepareDefaultIdentityDirectoryLocked(paths);
+      await resetRolesInRoot(root2);
+      return root2;
+    } catch (error62) {
+      if (!(error62 instanceof IdentityInvalidError) || error62.code !== "IDENTITY_INVALID") throw error62;
+      const [old, current] = await Promise.all([storageDirectoryStat(paths.source), storageDirectoryStat(paths.target)]);
+      if (old === void 0 || current !== void 0) throw error62;
+      await assertStorageIdle(paths.source);
+      await resetRolesInRoot(paths.source);
+      return prepareDefaultIdentityDirectoryLocked(paths);
     }
-    const env = options.env ?? process.env;
-    const home = env.DSH_HOME || join5(options.homeDirectory ?? homedir2(), ".dsh");
-    const source = join5(home, "remote");
-    const target3 = join5(home, "ds-harness-remote");
-    const [old, current] = await Promise.all([storageDirectoryStat(source), storageDirectoryStat(target3)]);
-    if (old === void 0 || current !== void 0) throw error62;
-    await assertStorageIdle(source);
-    await resetRolesInRoot(source);
-    return prepareDefaultIdentityDirectory(options);
-  }
+  });
 }
 async function assertOwnedRemoteStorage(root2) {
   let failureCode = "STORAGE_CONFLICT";
-  const rejected = (code = failureCode) => new IdentityInvalidError(
-    "Remote storage ownership could not be verified; nothing was moved. Inspect the legacy directory manually.",
+  const rejected = (code = failureCode, entryName) => new IdentityInvalidError(
+    entryName === void 0 ? STORAGE_CONFLICT_MESSAGE : `${STORAGE_CONFLICT_MESSAGE} Unexpected entry "${safeStorageEntryName(entryName)}" was found.`,
     code
   );
   const identityFiles = /* @__PURE__ */ new Set([
@@ -88576,6 +88814,7 @@ async function assertOwnedRemoteStorage(root2) {
     "device.key",
     "trusted-peers.json",
     "server-credentials.json",
+    "server-credentials.json.refresh-lock",
     "host-pairing.json",
     "pairing-host-only.json"
   ]);
@@ -88583,9 +88822,9 @@ async function assertOwnedRemoteStorage(root2) {
   let verifiedScopedIdentities = 0;
   const checkIdentity = async (directory, scope2, role2) => {
     const canAutoHeal = role2 === "client" || directory === root2 && verifiedScopedIdentities > 0;
-    const entries = (await readdir(directory, { withFileTypes: true })).filter((entry) => !(directory === root2 && entry.name === "servers" && entry.isDirectory()));
+    const entries = (await readStorageEntries(directory)).filter((entry) => !(directory === root2 && entry.name === "servers" && entry.isDirectory()));
     for (const entry of entries) {
-      if (entry.name.includes(".refresh-lock")) {
+      if (entry.name.includes(".refresh-lock") && entry.name !== "server-credentials.json.refresh-lock" && !isRefreshQueueArtifact(entry.name)) {
         if (entry.isSymbolicLink()) throw rejected("STORAGE_CONFLICT");
         throw new IdentityInvalidError(
           "Remote storage contains a lock or symbolic link; stop all Harness instances and inspect it before migration.",
@@ -88606,14 +88845,17 @@ async function assertOwnedRemoteStorage(root2) {
         }
         continue;
       }
-      const allowedFile = identityFiles.has(entry.name) || isOwnedTempArtifact(entry.name) || canAutoHeal && isIdentityTempArtifact(entry.name);
-      if (!entry.isFile() || !allowedFile) throw rejected("STORAGE_CONFLICT");
+      const allowedFile = identityFiles.has(entry.name) || isOwnedTempArtifact(entry.name) || isRefreshQueueArtifact(entry.name) || isBackupArtifact(entry.name) || canAutoHeal && isIdentityTempArtifact(entry.name);
+      if (!entry.isFile() || !allowedFile) throw rejected("STORAGE_CONFLICT", entry.name);
       const metadata = await lstat(join5(directory, entry.name));
-      if (!metadata.isFile() || metadata.isSymbolicLink() || metadata.nlink !== 1 || metadata.size > 16 * 1024 * 1024) {
-        throw rejected("STORAGE_CONFLICT");
+      if (!metadata.isFile() || metadata.isSymbolicLink() || metadata.size > 16 * 1024 * 1024 || metadata.nlink !== 1 && !await isVerifiedRefreshHardlink(directory, entry.name, entries.map((item) => item.name))) {
+        throw rejected("STORAGE_CONFLICT", entry.name);
       }
     }
     const names = new Set(entries.map((entry) => entry.name).filter((name2) => !isLockArtifact(name2)));
+    if (names.has("server-credentials.json.refresh-lock") && await readFile3(join5(directory, "server-credentials.json.refresh-lock"), "utf8") !== SERVER_CREDENTIALS_QUEUE_MARKER) {
+      throw rejected("STORAGE_CONFLICT");
+    }
     if (!names.has("device.json") && !names.has("device.key")) {
       if (canAutoHeal && await isRepairableLegacyClientDirectory(directory, names)) {
         if (names.size > 0) identities++;
@@ -88682,32 +88924,31 @@ async function assertOwnedRemoteStorage(root2) {
     if (scope2 !== void 0) verifiedScopedIdentities++;
   };
   try {
-    const entries = await readdir(root2, { withFileTypes: true });
+    const entries = await readStorageEntries(root2);
     const servers = entries.find((entry) => entry.name === "servers");
     if (servers !== void 0) {
-      if (!servers.isDirectory()) throw rejected("STORAGE_CONFLICT");
-      for (const scope2 of await readdir(join5(root2, "servers"), { withFileTypes: true })) {
-        if (!scope2.isDirectory() || !/^[a-f0-9]{24}$/.test(scope2.name)) throw rejected("STORAGE_CONFLICT");
-        for (const role2 of await readdir(join5(root2, "servers", scope2.name), { withFileTypes: true })) {
-          if (!role2.isDirectory() || role2.name !== "host" && role2.name !== "client") throw rejected("STORAGE_CONFLICT");
+      if (!servers.isDirectory()) throw rejected("STORAGE_CONFLICT", servers.name);
+      for (const scope2 of await readStorageEntries(join5(root2, "servers"))) {
+        if (!scope2.isDirectory() || !/^[a-f0-9]{24}$/.test(scope2.name)) throw rejected("STORAGE_CONFLICT", scope2.name);
+        for (const role2 of await readStorageEntries(join5(root2, "servers", scope2.name))) {
+          if (!role2.isDirectory() || role2.name !== "host" && role2.name !== "client") throw rejected("STORAGE_CONFLICT", role2.name);
           await checkIdentity(join5(root2, "servers", scope2.name, role2.name), scope2.name, role2.name);
         }
       }
     }
     const flat = entries.filter((entry) => entry.name !== "servers");
     if (flat.length > 0) {
-      if (flat.some((entry) => {
+      const unexpected = flat.find((entry) => {
         if (entry.name.includes(".refresh-lock")) return entry.isSymbolicLink();
         if (!entry.isFile()) return true;
-        return !identityFiles.has(entry.name) && !isOwnedTempArtifact(entry.name) && !isLockArtifact(entry.name) && !(verifiedScopedIdentities > 0 && isIdentityTempArtifact(entry.name));
-      })) {
-        throw rejected("STORAGE_CONFLICT");
-      }
+        return !identityFiles.has(entry.name) && !isOwnedTempArtifact(entry.name) && !isRefreshQueueArtifact(entry.name) && !isLockArtifact(entry.name) && !isBackupArtifact(entry.name) && !(verifiedScopedIdentities > 0 && isIdentityTempArtifact(entry.name));
+      });
+      if (unexpected !== void 0) throw rejected("STORAGE_CONFLICT", unexpected.name);
       await checkIdentity(root2);
     }
     if (identities === 0) throw rejected(failureCode);
   } catch (error62) {
-    if (error62 instanceof IdentityInvalidError && (error62.message === "Remote storage ownership could not be verified; nothing was moved. Inspect the legacy directory manually." || error62.code === "IDENTITY_LOCKED")) {
+    if (error62 instanceof IdentityInvalidError && (error62.code === "STORAGE_CONFLICT" || error62.code === "IDENTITY_LOCKED")) {
       throw error62;
     }
     throw rejected(failureCode);
@@ -88744,8 +88985,27 @@ async function assertStorageIdle(directory) {
   const takeoverPaths = [];
   const lockPaths = [];
   const scan = async (currentDirectory) => {
-    for (const entry of await readdir(currentDirectory, { withFileTypes: true })) {
+    const before = await readdir2(currentDirectory, { withFileTypes: true });
+    const names = before.map((entry) => entry.name);
+    const linkedTemps = [];
+    for (const entry of before) {
+      if (!isRefreshQueueTemp(entry.name)) continue;
+      const metadata = await lstat(join5(currentDirectory, entry.name));
+      if (metadata.nlink === 2 && await isVerifiedRefreshHardlink(currentDirectory, entry.name, names)) {
+        linkedTemps.push(join5(currentDirectory, entry.name));
+      }
+    }
+    try {
+      await assertRefreshQueueIdle(currentDirectory);
+    } catch (error62) {
+      if (!(error62 instanceof ServerCredentialsBusyError)) throw error62;
+      throw new IdentityInvalidError("Remote storage has an active credential refresh; stop it before migration.", "IDENTITY_LOCKED");
+    }
+    for (const temporary of linkedTemps) await unlink(temporary);
+    for (const entry of await readdir2(currentDirectory, { withFileTypes: true })) {
       const entryPath = join5(currentDirectory, entry.name);
+      if (entry.name === "server-credentials.json.refresh-lock" && entry.isFile() && await readFile3(entryPath, "utf8") === SERVER_CREDENTIALS_QUEUE_MARKER) continue;
+      if (entry.isFile() && isRefreshQueueArtifact(entry.name)) continue;
       if (entry.isSymbolicLink()) {
         throw new IdentityInvalidError(
           "Remote storage contains a lock or symbolic link; stop all Harness instances and inspect it before migration.",
@@ -88807,6 +89067,25 @@ async function assertStorageIdle(directory) {
     }
   }
 }
+var REFRESH_QUEUE_TEMP_PATTERN = /^(server-credentials\.json\.refresh-lock(?:\.holder-\d+-[0-9a-f-]{36})?)\.([1-9]\d*)\.[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.tmp$/;
+function isRefreshQueueTemp(name2) {
+  return REFRESH_QUEUE_TEMP_PATTERN.test(name2);
+}
+async function isVerifiedRefreshHardlink(directory, name2, names) {
+  const temporary = REFRESH_QUEUE_TEMP_PATTERN.exec(name2) === null ? names.filter((candidate) => REFRESH_QUEUE_TEMP_PATTERN.exec(candidate)?.[1] === name2) : [name2];
+  if (temporary.length !== 1) return false;
+  const match = REFRESH_QUEUE_TEMP_PATTERN.exec(temporary[0]);
+  if (match === null || !names.includes(match[1]) || !ownerExited2(`${match[2]}
+`)) return false;
+  const [source, published] = await Promise.all([
+    lstat(join5(directory, temporary[0]), { bigint: true }),
+    lstat(join5(directory, match[1]), { bigint: true })
+  ]);
+  return source.isFile() && published.isFile() && source.nlink === 2n && published.nlink === 2n && source.dev === published.dev && source.ino === published.ino;
+}
+function isRefreshQueueArtifact(name2) {
+  return /^server-credentials\.json\.refresh-lock\.holder-\d+-[0-9a-f-]{36}$/.test(name2) || isRefreshQueueTemp(name2);
+}
 function serverStorageDirectory(root2, serverUrl, role2) {
   const origin = new URL(serverUrl).origin;
   const scope2 = createHash5("sha256").update(origin).digest("hex").slice(0, 24);
@@ -88864,7 +89143,7 @@ async function withIdentityLock(directory, operation) {
 `, { encoding: "utf8", mode: 384, flag: "wx" });
       break;
     } catch (error62) {
-      if (!await isLockContention(error62, lockPath)) throw error62;
+      if (!await isLockContention2(error62, lockPath)) throw error62;
       if (await takeOverLockOfExitedOwner(lockPath)) continue;
     }
     if (Date.now() >= deadline) {
@@ -88873,7 +89152,7 @@ async function withIdentityLock(directory, operation) {
         "IDENTITY_LOCKED"
       );
     }
-    await new Promise((resolve9) => setTimeout(resolve9, delay));
+    await new Promise((resolve10) => setTimeout(resolve10, delay));
     delay = Math.min(delay * 2, LOCK_RETRY_MAX_MS);
   }
   try {
@@ -88882,7 +89161,7 @@ async function withIdentityLock(directory, operation) {
     await rm3(lockPath, { force: true });
   }
 }
-async function isLockContention(error62, lockPath) {
+async function isLockContention2(error62, lockPath) {
   if (!isNodeError(error62)) return false;
   if (error62.code === "EEXIST") return true;
   if (error62.code !== "EPERM" || process.platform !== "win32") return false;
@@ -88891,9 +89170,9 @@ async function isLockContention(error62, lockPath) {
 var MAX_LOCK_TAKEOVER_DEPTH = 8;
 async function takeOverLockOfExitedOwner(lockPath, depth = 0, reclaimed) {
   if (depth >= MAX_LOCK_TAKEOVER_DEPTH) return false;
-  const record11 = await readLockRecord(lockPath);
-  if (record11 === void 0 || !ownerExited(record11)) return false;
-  const lockName = basename3(lockPath);
+  const record11 = await readLockRecord2(lockPath);
+  if (record11 === void 0 || !ownerExited2(record11)) return false;
+  const lockName = basename4(lockPath);
   const claimInput = lockName === LOCK_FILE_NAME ? record11 : `${lockName}
 ${record11}`;
   const claimPath = join5(
@@ -88903,7 +89182,7 @@ ${record11}`;
   if (claimPath === lockPath) return false;
   if (!await acquireTakeoverClaim(claimPath, depth, reclaimed)) return false;
   try {
-    if (await readLockRecord(lockPath) !== record11 || !ownerExited(record11)) return false;
+    if (await readLockRecord2(lockPath) !== record11 || !ownerExited2(record11)) return false;
     await rm3(lockPath, { force: true });
     reclaimed?.add(lockPath);
     return true;
@@ -88918,20 +89197,20 @@ async function acquireTakeoverClaim(claimPath, depth, reclaimed) {
 `, { encoding: "utf8", mode: 384, flag: "wx" });
       return true;
     } catch (error62) {
-      if (!await isLockContention(error62, claimPath)) throw error62;
+      if (!await isLockContention2(error62, claimPath)) throw error62;
       if (attempt > 0 || !await takeOverLockOfExitedOwner(claimPath, depth + 1, reclaimed)) return false;
     }
   }
   return false;
 }
-async function readLockRecord(lockPath) {
+async function readLockRecord2(lockPath) {
   try {
     return await readFile3(lockPath, "utf8");
   } catch {
     return void 0;
   }
 }
-function ownerExited(record11) {
+function ownerExited2(record11) {
   if (!/^\d+\n$/.test(record11)) return false;
   const pid = Number(record11.trim());
   if (pid === 0 || pid > 2147483647) return false;
@@ -88951,9 +89230,9 @@ async function hasVerifiedScopedIdentity(directory) {
     const serversPath = join5(directory, "servers");
     const metadata = await lstat(serversPath);
     if (!metadata.isDirectory() || metadata.isSymbolicLink()) return false;
-    for (const scope2 of await readdir(serversPath, { withFileTypes: true })) {
+    for (const scope2 of await readdir2(serversPath, { withFileTypes: true })) {
       if (!scope2.isDirectory() || scope2.isSymbolicLink() || !/^[a-f0-9]{24}$/.test(scope2.name)) continue;
-      for (const role2 of await readdir(join5(serversPath, scope2.name), { withFileTypes: true })) {
+      for (const role2 of await readdir2(join5(serversPath, scope2.name), { withFileTypes: true })) {
         if (!role2.isDirectory() || role2.isSymbolicLink() || role2.name !== "host" && role2.name !== "client") continue;
         const roleDir = join5(serversPath, scope2.name, role2.name);
         try {
@@ -88979,7 +89258,7 @@ async function hasVerifiedScopedIdentity(directory) {
 }
 async function canAutoHealClientIdentity(directory, allowServersDirectory = false) {
   try {
-    const entries = await readdir(directory, { withFileTypes: true });
+    const entries = await readStorageEntries(directory);
     for (const entry of entries) {
       if (isLockArtifact(entry.name)) continue;
       const entryPath = join5(directory, entry.name);
@@ -88987,7 +89266,7 @@ async function canAutoHealClientIdentity(directory, allowServersDirectory = fals
       if (metadata.isSymbolicLink()) return false;
       if (allowServersDirectory && entry.name === "servers" && metadata.isDirectory()) continue;
       if (!metadata.isFile()) return false;
-      if (entry.name === "device.json" || entry.name === "device.key" || isIdentityTempArtifact(entry.name) || isPeerTempArtifact(entry.name)) {
+      if (entry.name === "device.json" || entry.name === "device.key" || isIdentityTempArtifact(entry.name) || isPeerTempArtifact(entry.name) || isBackupArtifact(entry.name)) {
         continue;
       }
       if (entry.name === "trusted-peers.json") {
@@ -89009,7 +89288,7 @@ async function ensureDirectory(directory) {
 async function removeIdentityRecords(directory) {
   let entries;
   try {
-    entries = await readdir(directory);
+    entries = await readdir2(directory);
   } catch {
     return;
   }
@@ -89021,9 +89300,32 @@ function isTakeoverLockArtifact(name2) {
 function isLockArtifact(name2) {
   return name2 === LOCK_FILE_NAME || isTakeoverLockArtifact(name2);
 }
+var STORAGE_METADATA_ARTIFACTS = /* @__PURE__ */ new Set([".ds_store", "desktop.ini", "thumbs.db"]);
+function isStorageMetadataArtifact(name2) {
+  return STORAGE_METADATA_ARTIFACTS.has(name2.toLowerCase());
+}
+function isBackupArtifact(name2) {
+  return STORAGE_CONFLICT_ENTRY_PATTERN.test(name2);
+}
+function safeStorageEntryName(name2) {
+  const safe = name2.replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 160);
+  return safe === "" ? "unnamed" : safe;
+}
+async function readStorageEntries(directory) {
+  const entries = await readdir2(directory, { withFileTypes: true });
+  const result = [];
+  for (const entry of entries) {
+    if (isStorageMetadataArtifact(entry.name) && entry.isFile()) {
+      const metadata = await lstat(join5(directory, entry.name));
+      if (metadata.isFile() && metadata.nlink === 1 && metadata.size <= 16 * 1024 * 1024) continue;
+    }
+    result.push(entry);
+  }
+  return result;
+}
 async function isExitedLockArtifact(path) {
-  const record11 = await readLockRecord(path);
-  return record11 !== void 0 && ownerExited(record11);
+  const record11 = await readLockRecord2(path);
+  return record11 !== void 0 && ownerExited2(record11);
 }
 function isPeerTempArtifact(name2) {
   return /^trusted-peers\.json\.[1-9]\d*\.[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.tmp$/.test(name2);
@@ -89035,7 +89337,7 @@ function isOwnedTempArtifact(name2) {
 function isStaleOwnedTempArtifact(name2) {
   const match = OWNED_TEMP_ARTIFACT_PATTERN.exec(name2);
   if (match === null) return false;
-  return ownerExited(`${match[1]}
+  return ownerExited2(`${match[1]}
 `);
 }
 function isIdentityTempArtifact(name2) {
@@ -89048,7 +89350,7 @@ function isOwnedIdentityRecord(name2) {
 async function removeStaleTemporaries(directory) {
   let entries;
   try {
-    entries = await readdir(directory);
+    entries = await readdir2(directory);
   } catch {
     return;
   }
@@ -89210,9 +89512,9 @@ var ControlStatusStream = class {
 // packages/plugin/src/codex/domain.ts
 import { randomUUID as randomUUID13 } from "node:crypto";
 import { accessSync, constants as constants2, existsSync as existsSync2, readdirSync as readdirSync2, readFileSync, statSync as statSync2 } from "node:fs";
-import { readdir as readdir2, realpath, stat as stat3 } from "node:fs/promises";
+import { readdir as readdir3, realpath, stat as stat3 } from "node:fs/promises";
 import { homedir as homedir3 } from "node:os";
-import { basename as basename4, isAbsolute as isAbsolute3, join as join6, relative, resolve as resolve2 } from "node:path";
+import { basename as basename5, isAbsolute as isAbsolute3, join as join6, relative, resolve as resolve3 } from "node:path";
 
 // packages/plugin/src/codex/app-server.ts
 import { spawn as spawn2 } from "node:child_process";
@@ -89285,15 +89587,15 @@ var CodexAppServerClient = class {
     const child = this.process;
     this.process = void 0;
     if (child === void 0 || child.exitCode !== null || child.killed) return;
-    await new Promise((resolve9) => {
+    await new Promise((resolve10) => {
       const timer2 = setTimeout(() => {
         child.kill("SIGKILL");
-        resolve9();
+        resolve10();
       }, 2e3);
       timer2.unref?.();
       child.once("exit", () => {
         clearTimeout(timer2);
-        resolve9();
+        resolve10();
       });
       child.kill("SIGTERM");
     });
@@ -89349,13 +89651,13 @@ var CodexAppServerClient = class {
   }
   request(method, params, timeoutMs) {
     const id6 = this.nextId++;
-    const result = new Promise((resolve9, reject) => {
+    const result = new Promise((resolve10, reject) => {
       const timer2 = setTimeout(() => {
         this.pending.delete(id6);
         reject(new CodexAppServerError("CODEX_REQUEST_TIMEOUT", "Codex App Server request timed out."));
       }, timeoutMs);
       timer2.unref?.();
-      this.pending.set(id6, { resolve: resolve9, reject, timer: timer2 });
+      this.pending.set(id6, { resolve: resolve10, reject, timer: timer2 });
     });
     try {
       this.write({ id: id6, method, params });
@@ -90864,7 +91166,7 @@ var CodexRemoteDomain = class {
       throw new RpcError("CODEX_PATH_NOT_ALLOWED", "The CodeX working directory is not available as a Workspace.");
     }
     const paths = await this.listCodexWorkspacePaths();
-    const lexicalCandidate = resolve2(path);
+    const lexicalCandidate = resolve3(path);
     let candidate;
     try {
       candidate = await realpath(path);
@@ -90874,7 +91176,7 @@ var CodexRemoteDomain = class {
     }
     for (const root2 of paths.values()) {
       try {
-        if (!containsCodexPath(resolve2(root2), lexicalCandidate)) continue;
+        if (!containsCodexPath(resolve3(root2), lexicalCandidate)) continue;
         const canonicalRoot = await realpath(root2);
         if (containsCodexPath(canonicalRoot, candidate)) return lexicalCandidate;
       } catch {
@@ -90887,7 +91189,7 @@ var CodexRemoteDomain = class {
       throw new RpcError("CODEX_PATH_NOT_ALLOWED", "The CodeX project directory must be an existing absolute directory.");
     }
     try {
-      const canonical = await realpath(resolve2(path));
+      const canonical = await realpath(resolve3(path));
       if (!(await stat3(canonical)).isDirectory()) throw new Error("not a directory");
       return canonical;
     } catch {
@@ -90896,13 +91198,13 @@ var CodexRemoteDomain = class {
   }
   async listCodexDirectory(path) {
     const target3 = await this.resolveCodexDirectory(path);
-    const rows = await readdir2(target3.path, { withFileTypes: true }).catch(() => void 0);
+    const rows = await readdir3(target3.path, { withFileTypes: true }).catch(() => void 0);
     if (rows === void 0) {
       throw new RpcError("CODEX_PATH_NOT_ALLOWED", "The CodeX working directory is not available as a Workspace.");
     }
     const entries = [];
     for (const row of rows) {
-      const child = resolve2(target3.path, row.name);
+      const child = resolve3(target3.path, row.name);
       let directory = row.isDirectory();
       if (!directory && row.isSymbolicLink()) {
         directory = await stat3(child).then((value) => value.isDirectory()).catch(() => false);
@@ -90935,7 +91237,7 @@ var CodexRemoteDomain = class {
       throw new RpcError("CODEX_PATH_NOT_ALLOWED", "The CodeX working directory is not available as a Workspace.");
     }
     const authority = await this.readWorkspaceAuthority();
-    const lexicalCandidate = resolve2(path);
+    const lexicalCandidate = resolve3(path);
     let canonicalCandidate;
     try {
       canonicalCandidate = await realpath(path);
@@ -90945,7 +91247,7 @@ var CodexRemoteDomain = class {
     }
     for (const root2 of authority.roots) {
       try {
-        const lexicalRoot = resolve2(root2);
+        const lexicalRoot = resolve3(root2);
         if (!containsCodexPath(lexicalRoot, lexicalCandidate)) continue;
         const canonicalRoot = await realpath(root2);
         if (containsCodexPath(canonicalRoot, canonicalCandidate)) {
@@ -91150,12 +91452,12 @@ function normalizeCodexPathForCompare(path) {
   return path.replace(/[\\/]+$/u, "") || path;
 }
 function codexDirectoryCrumbs(root2, path) {
-  const crumbs2 = [{ name: basename4(root2) || root2, path: root2, hidden: false }];
+  const crumbs2 = [{ name: basename5(root2) || root2, path: root2, hidden: false }];
   const remainder = relative(root2, path);
   if (remainder === "") return crumbs2;
   let current = root2;
   for (const segment of remainder.split(/[\\/]+/u).filter(Boolean)) {
-    current = resolve2(current, segment);
+    current = resolve3(current, segment);
     crumbs2.push({ name: segment, path: current, hidden: false });
   }
   return crumbs2;
@@ -91488,15 +91790,15 @@ var CursorAcpClient = class {
     const child = this.process;
     this.process = void 0;
     if (child === void 0 || child.exitCode !== null || child.killed) return;
-    await new Promise((resolve9) => {
+    await new Promise((resolve10) => {
       const timer2 = setTimeout(() => {
         child.kill("SIGKILL");
-        resolve9();
+        resolve10();
       }, 2e3);
       timer2.unref?.();
       child.once("exit", () => {
         clearTimeout(timer2);
-        resolve9();
+        resolve10();
       });
       child.kill("SIGTERM");
     });
@@ -91571,13 +91873,13 @@ var CursorAcpClient = class {
   }
   request(method, params, timeoutMs) {
     const id6 = this.nextId++;
-    const result = new Promise((resolve9, reject) => {
+    const result = new Promise((resolve10, reject) => {
       const timer2 = setTimeout(() => {
         this.pending.delete(id6);
         reject(new CursorAcpError("CURSOR_REQUEST_TIMEOUT", "Cursor ACP request timed out."));
       }, timeoutMs);
       timer2.unref?.();
-      this.pending.set(id6, { resolve: resolve9, reject, timer: timer2 });
+      this.pending.set(id6, { resolve: resolve10, reject, timer: timer2 });
     });
     try {
       this.write({ jsonrpc: "2.0", id: id6, method, params });
@@ -92079,8 +92381,8 @@ var IsolatedAcpClient = class {
 };
 
 // packages/plugin/src/workspace-bridge.ts
-import { realpath as realpath2, lstat as lstat2, readdir as readdir3, open as open4, stat as stat4, watch } from "node:fs/promises";
-import { isAbsolute as isAbsolute5, join as join8, relative as relative2, resolve as resolve3 } from "node:path";
+import { realpath as realpath2, lstat as lstat2, readdir as readdir4, open as open4, stat as stat4, watch } from "node:fs/promises";
+import { isAbsolute as isAbsolute5, join as join8, relative as relative2, resolve as resolve4 } from "node:path";
 
 // packages/plugin/src/remote-terminal-controller.ts
 var import_headless = __toESM(require_xterm_headless(), 1);
@@ -92120,14 +92422,14 @@ async function discoverTerminalShells(provider, signal = new AbortController().s
     platform: process.platform === "win32" ? "windows" : "posix",
     defaultShell: process.platform === "win32" ? process.env.ComSpec : process.env.SHELL || userInfo().shell || void 0
   } : await provider.terminalEnvironment(signal);
-  const resolve9 = provider?.resolveExecutable?.bind(provider) ?? localExecutable;
+  const resolve10 = provider?.resolveExecutable?.bind(provider) ?? localExecutable;
   const preferred = profile(environment.defaultShell || (environment.platform === "windows" ? "cmd.exe" : "/bin/sh"));
-  preferred.path = await resolve9(preferred.path, void 0, signal);
+  preferred.path = await resolve10(preferred.path, void 0, signal);
   if (provider && !provider.terminalEnvironment) return [preferred];
   const candidates = ["zsh", "bash", "fish", "pwsh", "powershell", "cmd"];
   const found = await Promise.all(candidates.map(async (file2) => {
     try {
-      return { ...profile(file2), path: await resolve9(file2, void 0, signal) };
+      return { ...profile(file2), path: await resolve10(file2, void 0, signal) };
     } catch (error62) {
       if (error62 instanceof RpcError && error62.code === "TERMINAL_SHELL_UNAVAILABLE" || error62 instanceof Error && error62.name === "SubprocessExecutableNotFoundError") return void 0;
       throw error62;
@@ -92154,14 +92456,14 @@ function pipeTerminalSpawner() {
     output2.setEncoding("utf8");
     child.stdout.pipe(output2, { end: false });
     child.stderr.pipe(output2, { end: false });
-    const completed = new Promise((resolve9, reject) => {
+    const completed = new Promise((resolve10, reject) => {
       child.once("error", (error62) => {
         output2.destroy();
         reject(error62);
       });
       child.once("close", (exitCode) => {
         output2.end();
-        resolve9({ exitCode });
+        resolve10({ exitCode });
       });
     });
     void completed.catch(() => void 0);
@@ -92170,8 +92472,8 @@ function pipeTerminalSpawner() {
     };
     spec.signal.addEventListener("abort", abort, { once: true });
     try {
-      await new Promise((resolve9, reject) => {
-        child.once("spawn", resolve9);
+      await new Promise((resolve10, reject) => {
+        child.once("spawn", resolve10);
         child.once("error", reject);
       });
       spec.signal.throwIfAborted();
@@ -92284,8 +92586,8 @@ var TerminalFollower = class {
           this.bytes -= next.bytes;
           yield next.value;
         } else if (this.finished) break;
-        else await new Promise((resolve9) => {
-          this.wake = resolve9;
+        else await new Promise((resolve10) => {
+          this.wake = resolve10;
         });
       }
       if (this.failure) throw this.failure;
@@ -92366,7 +92668,7 @@ var OwnedTerminal = class {
           start = end;
           await this.enqueue(async () => {
             if (this.disposed) return;
-            await new Promise((resolve9) => this.screen.write(data2, resolve9));
+            await new Promise((resolve10) => this.screen.write(data2, resolve10));
             this.sequence++;
             this.emit({ type: "output", sequence: this.sequence, data: data2 });
           });
@@ -92693,7 +92995,7 @@ var AsyncQueue = class {
     const value = this.values.shift();
     if (value !== void 0) return Promise.resolve({ done: false, value });
     if (this.ended) return Promise.resolve({ done: true, value: void 0 });
-    return new Promise((resolve9) => this.waiters.push(resolve9));
+    return new Promise((resolve10) => this.waiters.push(resolve10));
   }
   [Symbol.asyncIterator]() {
     return this;
@@ -92758,7 +93060,7 @@ var WorkspaceBridge = class {
     const target3 = await this.safePath(root2, path, endpoint === "workspaceFiles/list");
     try {
       if (endpoint === "workspaceFiles/list") {
-        const entries = await readdir3(target3, { withFileTypes: true });
+        const entries = await readdir4(target3, { withFileTypes: true });
         const result = [];
         for (const entry of entries.slice(0, 500)) {
           const item = join8(target3, entry.name);
@@ -92857,7 +93159,7 @@ var WorkspaceBridge = class {
     }
   }
   async safePath(root2, path, directory) {
-    const candidate = isAbsolute5(path) ? resolve3(path) : resolve3(root2, path);
+    const candidate = isAbsolute5(path) ? resolve4(path) : resolve4(root2, path);
     const rel = relative2(root2, candidate);
     if (rel.startsWith("..") || isAbsolute5(rel)) throw this.scopeError("WORKSPACE_PATH_DENIED", "The requested workspace path is outside the CodeX workspace.");
     try {
@@ -93027,9 +93329,9 @@ var AcpWorkspaceTools = class {
 
 // packages/plugin/src/acp/gateway.ts
 import { randomUUID as randomUUID15 } from "node:crypto";
-import { readdir as readdir4, realpath as realpath5, stat as stat5 } from "node:fs/promises";
+import { readdir as readdir5, realpath as realpath5, stat as stat5 } from "node:fs/promises";
 import { homedir as homedir6 } from "node:os";
-import { basename as basename6, isAbsolute as isAbsolute7, join as join12, relative as relative4, resolve as resolve5 } from "node:path";
+import { basename as basename7, isAbsolute as isAbsolute7, join as join12, relative as relative4, resolve as resolve6 } from "node:path";
 
 // packages/plugin/src/acp/adapters/claude-process.ts
 import { Buffer as Buffer5 } from "node:buffer";
@@ -93356,7 +93658,7 @@ function agySelectionArgs(catalog, modelId, effort) {
 // packages/plugin/src/acp/adapters/antigravity/image-store.ts
 import { promises as fs, realpathSync as realpathSync2, constants as constants4 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join as join9, basename as basename5 } from "node:path";
+import { join as join9, basename as basename6 } from "node:path";
 import { createHash as createHash6, randomUUID as randomUUID14 } from "node:crypto";
 var EXTENSIONS = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp", "image/gif": "gif" };
 var IMAGE_NAME = /^[0-9a-f-]{36}\.(png|jpg|webp|gif)$/;
@@ -93433,7 +93735,7 @@ function agyImageReferences(text) {
   }
 }
 async function readAgyImage(sessionId, path, root2 = AGY_IMAGE_ROOT) {
-  const name2 = basename5(path);
+  const name2 = basename6(path);
   if (!IMAGE_NAME.test(name2) || path !== join9(root2, sessionFolder(sessionId), name2)) return void 0;
   try {
     await privateDirectory(root2);
@@ -93909,15 +94211,15 @@ var AntigravityAcpClient = class _AntigravityAcpClient {
     const child = this.process;
     this.process = void 0;
     if (child === void 0 || child.exitCode !== null || child.killed) return;
-    await new Promise((resolve9) => {
+    await new Promise((resolve10) => {
       const timer2 = setTimeout(() => {
         child.kill("SIGKILL");
-        resolve9();
+        resolve10();
       }, 2e3);
       timer2.unref?.();
       child.once("exit", () => {
         clearTimeout(timer2);
-        resolve9();
+        resolve10();
       });
       child.kill("SIGTERM");
     });
@@ -93942,7 +94244,7 @@ var AntigravityAcpClient = class _AntigravityAcpClient {
     this.stderrBytes = 0;
     let initResolved = false;
     let rejectInit;
-    const initPromise = new Promise((resolve9, reject) => {
+    const initPromise = new Promise((resolve10, reject) => {
       rejectInit = reject;
       const timer2 = setTimeout(() => {
         if (!initResolved) {
@@ -93960,7 +94262,7 @@ var AntigravityAcpClient = class _AntigravityAcpClient {
               this.activeConversationId = conversationId;
               this.attachWatcher(conversationId);
             }
-            resolve9();
+            resolve10();
           }
         });
       };
@@ -94019,7 +94321,7 @@ var AntigravityAcpClient = class _AntigravityAcpClient {
     }
     const selected = this.selections.get(sessionId);
     if (selected) this.emitNotification("session/update", { sessionId, update: { sessionUpdate: "model_selection", selected } });
-    return new Promise((resolve9, reject) => {
+    return new Promise((resolve10, reject) => {
       const timer2 = setTimeout(() => {
         if (this.currentPromptPending) {
           this.currentPromptPending = void 0;
@@ -94027,7 +94329,7 @@ var AntigravityAcpClient = class _AntigravityAcpClient {
         }
       }, timeoutMs);
       timer2.unref?.();
-      this.currentPromptPending = { sessionId, resolve: resolve9, reject, timer: timer2 };
+      this.currentPromptPending = { sessionId, resolve: resolve10, reject, timer: timer2 };
       const payload = {
         event: "user",
         message: { content: promptText }
@@ -94288,12 +94590,12 @@ var OpencodeNativeApi = class {
 };
 async function opencodeLoopbackPort() {
   const server = createServer3();
-  await new Promise((resolve9, reject) => {
+  await new Promise((resolve10, reject) => {
     server.once("error", reject);
-    server.listen(0, "127.0.0.1", () => resolve9());
+    server.listen(0, "127.0.0.1", () => resolve10());
   });
   const address2 = server.address();
-  await new Promise((resolve9, reject) => server.close((error62) => error62 ? reject(error62) : resolve9()));
+  await new Promise((resolve10, reject) => server.close((error62) => error62 ? reject(error62) : resolve10()));
   if (!address2 || typeof address2 === "string") throw unavailable();
   return address2.port;
 }
@@ -94551,15 +94853,15 @@ var OpencodeAcpClient = class _OpencodeAcpClient {
       await history;
       return;
     }
-    await Promise.all([history, new Promise((resolve9) => {
+    await Promise.all([history, new Promise((resolve10) => {
       const timer2 = setTimeout(() => {
         child.kill("SIGKILL");
-        resolve9();
+        resolve10();
       }, 2e3);
       timer2.unref?.();
       child.once("exit", () => {
         clearTimeout(timer2);
-        resolve9();
+        resolve10();
       });
       child.kill("SIGTERM");
     })]);
@@ -94638,13 +94940,13 @@ var OpencodeAcpClient = class _OpencodeAcpClient {
   }
   request(method, params, timeoutMs) {
     const id6 = this.nextId++;
-    const result = new Promise((resolve9, reject) => {
+    const result = new Promise((resolve10, reject) => {
       const timer2 = setTimeout(() => {
         this.pending.delete(id6);
         reject(new OpencodeAcpError("OPENCODE_REQUEST_TIMEOUT", "OpenCode ACP request timed out."));
       }, timeoutMs);
       timer2.unref?.();
-      this.pending.set(id6, { resolve: resolve9, reject, timer: timer2 });
+      this.pending.set(id6, { resolve: resolve10, reject, timer: timer2 });
     });
     try {
       this.write({ jsonrpc: "2.0", id: id6, method, params });
@@ -94864,7 +95166,7 @@ function isSessionMutation(method) {
 
 // packages/plugin/src/acp/adapters/antigravity/transcript-loader.ts
 import { promises as fs3 } from "node:fs";
-import { isAbsolute as isAbsolute6, join as join11, relative as relative3, resolve as resolve4, sep } from "node:path";
+import { isAbsolute as isAbsolute6, join as join11, relative as relative3, resolve as resolve5, sep as sep2 } from "node:path";
 import { fileURLToPath as fileURLToPath2 } from "node:url";
 import { homedir as homedir5 } from "node:os";
 import { createRequire as createRequire2 } from "node:module";
@@ -95031,7 +95333,7 @@ async function discoverAntigravityWorkspaces(dbPath = join11(homedir5(), ".gemin
             try {
               const p = fileURLToPath2(u);
               const imageRelative = relative3(AGY_IMAGE_ROOT, p);
-              const imageCache = imageRelative === "" || !isAbsolute6(imageRelative) && imageRelative !== ".." && !imageRelative.startsWith(`..${sep}`);
+              const imageCache = imageRelative === "" || !isAbsolute6(imageRelative) && imageRelative !== ".." && !imageRelative.startsWith(`..${sep2}`);
               if (!imageCache) paths.add(p);
             } catch {
             }
@@ -95075,7 +95377,7 @@ async function readTranscriptSummary(baseDir, conversationId) {
   }
 }
 async function discoverAntigravitySessions(workspacePath, limit = 30, baseDir = join11(homedir5(), ".gemini/antigravity-cli/brain"), dbPath = join11(homedir5(), ".gemini/antigravity-cli/conversation_summaries.db")) {
-  const requestedWorkspace = workspacePath.trim() === "" ? void 0 : resolve4(workspacePath);
+  const requestedWorkspace = workspacePath.trim() === "" ? void 0 : resolve5(workspacePath);
   try {
     await fs3.stat(dbPath);
     const rows = await querySqliteJson(
@@ -95150,7 +95452,7 @@ function workspaceMatches(rawUris, requestedWorkspace) {
     return Array.isArray(uris) && uris.some((uri) => {
       if (typeof uri !== "string") return false;
       try {
-        return resolve4(fileURLToPath2(uri)) === requestedWorkspace;
+        return resolve5(fileURLToPath2(uri)) === requestedWorkspace;
       } catch {
         return false;
       }
@@ -95778,7 +96080,7 @@ var AcpRemoteGateway = class {
       const requestedBackend = typeof call.params.backend === "string" ? call.params.backend : this.defaultBackend();
       if (isCatalogBackend(requestedBackend)) {
         const sessions = await this.listCatalogSessions(requestedBackend);
-        const discovered = [...new Set(sessions.map((item) => item.cwd))].map((path) => ({ path, title: basename6(path) || "workspace" }));
+        const discovered = [...new Set(sessions.map((item) => item.cwd))].map((path) => ({ path, title: basename7(path) || "workspace" }));
         if (discovered.length > 0 || requestedBackend !== "opencode") return discovered;
         const defaultCandidates = /* @__PURE__ */ new Set();
         const cwd3 = process.cwd();
@@ -95790,7 +96092,7 @@ var AcpRemoteGateway = class {
           } catch {
           }
         }
-        return [...defaultCandidates].map((path) => ({ path, title: basename6(path) || "workspace" }));
+        return [...defaultCandidates].map((path) => ({ path, title: basename7(path) || "workspace" }));
       }
       const candidates = /* @__PURE__ */ new Set();
       const cwd2 = process.cwd();
@@ -95823,7 +96125,7 @@ var AcpRemoteGateway = class {
         }
         return {
           path: p,
-          title: basename6(p) || "workspace",
+          title: basename7(p) || "workspace",
           ...sessionCount > 0 ? { sessionCount } : {}
         };
       }));
@@ -96117,8 +96419,8 @@ var AcpRemoteGateway = class {
     const readEpoch = ++this.historyEpoch;
     const previous = this.backendHistoryChains.get(backend) ?? Promise.resolve();
     let releaseQueue;
-    const currentTurn = new Promise((resolve9) => {
-      releaseQueue = resolve9;
+    const currentTurn = new Promise((resolve10) => {
+      releaseQueue = resolve10;
     });
     const nextChain = previous.then(() => currentTurn, () => currentTurn);
     this.backendHistoryChains.set(backend, nextChain);
@@ -96751,8 +97053,8 @@ var AcpRemoteGateway = class {
   async listDirectory(path) {
     const home = homedir6();
     const target3 = path.trim() === "~" || path.trim() === "" ? home : path.startsWith("~/") ? join12(home, path.slice(2)) : path;
-    const canonical = await this.requireExistingDirectory(isAbsolute7(target3) ? target3 : resolve5(target3));
-    const names = await readdir4(canonical);
+    const canonical = await this.requireExistingDirectory(isAbsolute7(target3) ? target3 : resolve6(target3));
+    const names = await readdir5(canonical);
     const entries = [];
     let truncated = false;
     for (const name2 of names.sort((a, b) => a.localeCompare(b))) {
@@ -96853,11 +97155,11 @@ function buildCrumbs(path, home) {
   let current = path;
   while (true) {
     crumbs2.unshift({
-      name: current === home ? "~" : basename6(current) || current,
+      name: current === home ? "~" : basename7(current) || current,
       path: current,
       hidden: false
     });
-    const parent = resolve5(current, "..");
+    const parent = resolve6(current, "..");
     if (parent === current) break;
     if (home !== "" && relative4(home, current) === "" && current !== home) break;
     current = parent;
@@ -97296,7 +97598,7 @@ var PluginControlRuntime = class {
   }
   async handle(endpoint, payload, signal) {
     try {
-      if (endpoint !== "settings.server.set" && endpoint !== "settings.identity.reset") await this.serverSwitchFlight;
+      if (endpoint !== "settings.server.set" && endpoint !== "settings.identity.reset" && endpoint !== "settings.startup.retry") await this.serverSwitchFlight;
       if (endpoint.startsWith("host.pairing.")) {
         if (this.host?.pairingControl === void 0) throw new ClientModeError("METHOD_NOT_ALLOWED", "Host device pairing is unavailable.");
         const action = endpoint.slice("host.pairing.".length);
@@ -97313,6 +97615,7 @@ var PluginControlRuntime = class {
       if (endpoint === "settings.get") return ok3(await this.settingsView());
       if (endpoint === "settings.configure") return ok3(await this.configure(payload));
       if (endpoint === "settings.server.set") return ok3(await this.setServer(payload));
+      if (endpoint === "settings.startup.retry") return ok3(await this.retryStartup());
       if (endpoint === "settings.role.set") return ok3(await this.setRole(payload));
       if (endpoint === "settings.codex.set") return ok3(await this.setCodex(payload));
       if (endpoint === "settings.cursor.set") return ok3(await this.setCursor(payload));
@@ -97405,7 +97708,7 @@ var PluginControlRuntime = class {
       role: value.role
     });
     let identity3 = await identities.loadOrCreate(hostname4());
-    const api = value.role === "host" ? new HostServerApi(next.serverUrl, new ServerCredentialStore(identities.directory)) : new ClientServerApi(next.serverUrl, new ServerCredentialStore(identities.directory));
+    const api = value.role === "host" ? new HostServerApi(next.serverUrl, new ServerCredentialStore(identities.directory), fetch, "host", next.httpServerAllowlist) : new ClientServerApi(next.serverUrl, new ServerCredentialStore(identities.directory), fetch, next.httpServerAllowlist);
     let authorization;
     if (value.role === "host" && typeof value.registrationCode === "string" && value.registrationCode.trim() !== "") {
       authorization = await api.authorizeHostWithCode(identity3, value.registrationCode);
@@ -97434,6 +97737,35 @@ var PluginControlRuntime = class {
       throw new ClientModeError("SERVER_SWITCH_BUSY", "A Server switch is already in progress.");
     }
     const flight = this.applyServer(payload);
+    this.serverSwitchFlight = flight;
+    try {
+      return await flight;
+    } finally {
+      if (this.serverSwitchFlight === flight) this.serverSwitchFlight = void 0;
+    }
+  }
+  async retryStartup() {
+    if (this.serverSwitchFlight !== void 0) {
+      throw new ClientModeError("SERVER_SWITCH_BUSY", "A Server switch is already in progress.");
+    }
+    if (this.startupFailure === void 0) return this.settingsView();
+    const switchServer = this.switchServer;
+    if (switchServer === void 0) {
+      throw new ClientModeError("SETTINGS_UNAVAILABLE", "Remote startup retry is unavailable in this profile.");
+    }
+    const flight = (async () => {
+      await this.logoutFlight;
+      try {
+        const runtimes = await switchServer(this.config);
+        this.client = runtimes.client;
+        this.host = runtimes.host;
+        this.clearStartupFailure();
+      } catch (error62) {
+        this.setStartupFailure(error62);
+        throw error62;
+      }
+      return this.settingsView();
+    })();
     this.serverSwitchFlight = flight;
     try {
       return await flight;
@@ -97693,18 +98025,19 @@ var PluginControlRuntime = class {
     if (!this.storageAvailable && this.startupFailure instanceof Error) {
       throw this.startupFailure;
     }
+    const current = resolveConfig(this.settings?.get() ?? {});
     const sourceDirectory = serverStorageDirectory(this.identityDirectory, serverUrl, sourceRole);
     const sourceIdentity = await new IdentityStore({ directory: sourceDirectory, role: sourceRole }).loadOrCreate(hostname4());
     const sourceStore = new ServerCredentialStore(sourceDirectory);
     if (await sourceStore.load(serverUrl, sourceIdentity.deviceId) === void 0) return;
-    const sourceApi = sourceRole === "host" ? new HostServerApi(serverUrl, sourceStore) : new ClientServerApi(serverUrl, sourceStore);
+    const sourceApi = sourceRole === "host" ? new HostServerApi(serverUrl, sourceStore, fetch, "host", current.httpServerAllowlist) : new ClientServerApi(serverUrl, sourceStore, fetch, current.httpServerAllowlist);
     sourceApi.bindIdentity(sourceIdentity);
     await sourceApi.loadStoredPolicy();
     if (sourceApi.pairingHostOnly()) throw new ClientModeError("DEVICE_SCOPE_REQUIRED", "Paired Host cannot create a Client identity.");
     const sourceCredentials = await sourceApi.authenticate(sourceIdentity);
     const targetDirectory = serverStorageDirectory(this.identityDirectory, serverUrl, targetRole);
     const targetIdentity = await new IdentityStore({ directory: targetDirectory, role: targetRole }).loadOrCreate(hostname4());
-    const targetApi = targetRole === "host" ? new HostServerApi(serverUrl, new ServerCredentialStore(targetDirectory)) : new ClientServerApi(serverUrl, new ServerCredentialStore(targetDirectory));
+    const targetApi = targetRole === "host" ? new HostServerApi(serverUrl, new ServerCredentialStore(targetDirectory), fetch, "host", current.httpServerAllowlist) : new ClientServerApi(serverUrl, new ServerCredentialStore(targetDirectory), fetch, current.httpServerAllowlist);
     await targetApi.authorizeOwnedRole(targetIdentity, sourceCredentials.accessToken, sourceCredentials.account);
   }
   logout() {
@@ -97819,6 +98152,7 @@ function editableConfig(config2) {
     enabled: config2.enabled,
     role: config2.role,
     ...config2.serverUrl === void 0 ? {} : { serverUrl: config2.serverUrl },
+    httpServerAllowlist: config2.httpServerAllowlist,
     terminal: config2.terminal,
     remoteTools: config2.remoteTools,
     sidebar: config2.sidebar,
@@ -97931,12 +98265,12 @@ ${createHash7("sha256").update(raw).digest("hex")}`).digest("base64url");
 }
 var fullFingerprint = (key) => createHash7("sha256").update(rawKey(key)).digest("hex");
 var HostPairing = class {
-  constructor(serverUrl, directory, identity3, descriptor, adopt, fetcher = fetch) {
+  constructor(serverUrl, directory, identity3, descriptor, adopt, fetcher = fetch, httpServerAllowlist = []) {
     this.identity = identity3;
     this.descriptor = descriptor;
     this.adopt = adopt;
     this.fetcher = fetcher;
-    this.serverUrl = normalizeServerUrl(serverUrl);
+    this.serverUrl = normalizeServerUrl(serverUrl, httpServerAllowlist);
     this.path = join14(directory, "host-pairing.json");
   }
   path;
@@ -98134,7 +98468,7 @@ var HostPairing = class {
 // packages/plugin/src/workspace-upload.ts
 import { randomUUID as randomUUID16 } from "node:crypto";
 import { constants as constants6 } from "node:fs";
-import { link, lstat as lstat3, open as open5, realpath as realpath6, stat as stat6, unlink as unlink2 } from "node:fs/promises";
+import { link as link2, lstat as lstat3, open as open5, realpath as realpath6, stat as stat6, unlink as unlink2 } from "node:fs/promises";
 import { extname, isAbsolute as isAbsolute8, join as join15 } from "node:path";
 var WORKSPACE_UPLOAD_BYTES = 20 * 1024 * 1024;
 var WORKSPACE_UPLOAD_CHUNK = 64 * 1024;
@@ -98258,7 +98592,7 @@ var WorkspaceUploadHost = class {
       await this.validateRoot(upload);
       const name2 = suffix === 0 ? upload.name : `${stem} (${suffix})${extension2}`;
       try {
-        await link(upload.temp, join15(upload.root, name2));
+        await link2(upload.temp, join15(upload.root, name2));
       } catch (error62) {
         if (error62.code === "EEXIST") continue;
         throw error62;
@@ -99059,7 +99393,7 @@ var HostServerConnection = class {
           this.logger.warn("Server does not support the Remote protocol version; automatic reconnect is paused.");
         }
         if (TERMINAL_AUTH_ERRORS.has(code)) {
-          this.logger.warn(code === "CONNECTION_REPLACED" ? "Another instance is using this Host identity. Stop it or use a separate DSH_HOME; automatic reconnect is paused." : code === "SERVER_CREDENTIALS_BUSY" ? "Credential refresh is locked. Stop other instances; after a crash, stop all instances before removing server-credentials.json.refresh-lock and authorizing again." : "Host authorization failed. Authorize this Host again from a Remote client or in Remote settings.");
+          this.logger.warn(code === "CONNECTION_REPLACED" ? "Another instance is using this Host identity. Stop it or use a separate DSH_HOME; automatic reconnect is paused." : "Host authorization failed. Authorize this Host again from a Remote client or in Remote settings.");
         }
         if (code === "DEVICE_REVOKED") {
           try {
@@ -99101,7 +99435,7 @@ var HostServerConnection = class {
     let invalidControl = false;
     let socketError;
     let messageQueue = Promise.resolve();
-    await new Promise((resolve9, reject) => {
+    await new Promise((resolve10, reject) => {
       let settled = false;
       let closing = false;
       let upgradeTimer;
@@ -99143,7 +99477,7 @@ var HostServerConnection = class {
         }
         const preserve = this.config.reconnect.enabled && !this.stopped && !this.reconnectRequested && (error62 === void 0 ? retainOnClose : isRetryable(error62)) && !invalidControl && !TERMINAL_AUTH_ERRORS.has(this.terminalError ?? "") && [...this.tunnels.values()].some((tunnel) => tunnel.lease?.canDetach());
         const cleanup = preserve ? Promise.all([...this.tunnels.values()].filter((tunnel) => !tunnel.lease?.canDetach()).map((tunnel) => this.dropTunnel(tunnel.connectionId))) : this.dropTunnels();
-        void cleanup.catch(() => void 0).finally(() => error62 === void 0 ? resolve9() : reject(error62));
+        void cleanup.catch(() => void 0).finally(() => error62 === void 0 ? resolve10() : reject(error62));
       };
       let forceDrainWake;
       const handleClose = (event, forced = false) => {
@@ -99164,9 +99498,9 @@ var HostServerConnection = class {
             let drainTimer;
             await Promise.race([
               messageQueue.catch(() => void 0),
-              new Promise((resolve10) => {
-                forceDrainWake = resolve10;
-                drainTimer = setTimeout(resolve10, 50);
+              new Promise((resolve11) => {
+                forceDrainWake = resolve11;
+                drainTimer = setTimeout(resolve11, 50);
               })
             ]);
             if (drainTimer !== void 0) clearTimeout(drainTimer);
@@ -99906,14 +100240,14 @@ var HostServerConnection = class {
     const socket = this.createWebSocket(assignment.relayEndpoint);
     socket.binaryType = "arraybuffer";
     tunnel.dataSocket = socket;
-    await new Promise((resolve9, reject) => {
+    await new Promise((resolve10, reject) => {
       let settled = false;
       const timer2 = setTimeout(() => finish(new Error("Relay data attach timed out")), 15e3);
       const finish = (error62) => {
         if (settled) return;
         settled = true;
         clearTimeout(timer2);
-        if (error62 === void 0) resolve9();
+        if (error62 === void 0) resolve10();
         else reject(error62);
       };
       socket.onopen = () => {
@@ -100029,21 +100363,20 @@ var HostServerConnection = class {
   }
   waitBeforeRetry() {
     const delay = Math.round(Math.random() * this.config.reconnect.maxDelayMs);
-    return new Promise((resolve9) => {
+    return new Promise((resolve10) => {
       const timer2 = setTimeout(() => {
         this.retryWake = void 0;
-        resolve9();
+        resolve10();
       }, delay);
       this.retryWake = () => {
         clearTimeout(timer2);
-        resolve9();
+        resolve10();
       };
     });
   }
 };
 var TERMINAL_AUTH_ERRORS = /* @__PURE__ */ new Set([
   "CONNECTION_REPLACED",
-  "SERVER_CREDENTIALS_BUSY",
   "ACCOUNT_AUTH_REQUIRED",
   "AUTH_INVALID",
   "DEVICE_OWNERSHIP_REQUIRED",
@@ -100261,29 +100594,29 @@ function closeCode(code) {
 // packages/plugin/src/harness-remote-bridge.ts
 import { randomUUID as randomUUID17 } from "node:crypto";
 import { lstat as lstat4, realpath as realpath7, stat as stat8 } from "node:fs/promises";
-import { dirname as dirname7, isAbsolute as isAbsolute10, join as join16, parse as parse4, relative as relative5, resolve as resolve8, sep as sep2 } from "node:path";
+import { dirname as dirname7, isAbsolute as isAbsolute10, join as join16, parse as parse4, relative as relative5, resolve as resolve9, sep as sep3 } from "node:path";
 
 // packages/plugin/src/remote-directory-browser.ts
-import { mkdir as mkdir4, readdir as readdir5, stat as stat7 } from "node:fs/promises";
+import { mkdir as mkdir4, readdir as readdir6, stat as stat7 } from "node:fs/promises";
 import { homedir as homedir8, platform as platform2 } from "node:os";
-import { basename as basename7, dirname as dirname6, isAbsolute as isAbsolute9, parse as parse3, resolve as resolve7 } from "node:path";
+import { basename as basename8, dirname as dirname6, isAbsolute as isAbsolute9, parse as parse3, resolve as resolve8 } from "node:path";
 var MAX_ENTRIES = 500;
 async function ensureHostWorkspaceDirectory(path) {
-  if (typeof path !== "string" || path.trim() === "" || path.includes("\0") || !isAbsolute9(path) || resolve7(path) === parse3(path).root) {
+  if (typeof path !== "string" || path.trim() === "" || path.includes("\0") || !isAbsolute9(path) || resolve8(path) === parse3(path).root) {
     throw new RpcError("INVALID_MESSAGE", "Workspace path must be an absolute, non-root directory path.");
   }
   await mkdir4(path, { recursive: true });
 }
 async function listRemoteDirectory(path, signal) {
   signal?.throwIfAborted();
-  const home = resolve7(homedir8());
-  const target3 = path === void 0 || path.trim() === "" ? home : resolve7(path);
+  const home = resolve8(homedir8());
+  const target3 = path === void 0 || path.trim() === "" ? home : resolve8(path);
   if (!isAbsolute9(target3)) throw new Error("The remote directory path must be absolute.");
-  const rows = await readdir5(target3, { withFileTypes: true });
+  const rows = await readdir6(target3, { withFileTypes: true });
   const directories = [];
   for (const row of rows) {
     signal?.throwIfAborted();
-    const child = resolve7(target3, row.name);
+    const child = resolve8(target3, row.name);
     let directory = row.isDirectory();
     if (!directory && row.isSymbolicLink()) directory = await stat7(child).then((value) => value.isDirectory()).catch(() => false);
     if (!directory) continue;
@@ -100304,11 +100637,11 @@ function crumbs(path) {
   const segments = [];
   let current = path;
   while (current !== root2) {
-    segments.unshift(basename7(current));
+    segments.unshift(basename8(current));
     current = dirname6(current);
   }
   for (const segment of segments) {
-    current = resolve7(current, segment);
+    current = resolve8(current, segment);
     result.push({ name: segment, path: current, hidden: false });
   }
   return result;
@@ -100888,8 +101221,8 @@ var HarnessRemoteBridge = class {
     const transferId = randomUUID17();
     const totalChunks = Math.ceil(bytes.byteLength / HARNESS_API_TRANSFER_CHUNK_BYTES);
     let finish;
-    const completed = new Promise((resolve9, reject) => {
-      finish = (error62) => error62 === void 0 ? resolve9() : reject(error62);
+    const completed = new Promise((resolve10, reject) => {
+      finish = (error62) => error62 === void 0 ? resolve10() : reject(error62);
     });
     void completed.catch(() => void 0);
     const transfer = { bytes, totalChunks, nextIndex: 0, touchedAt: Date.now(), finish };
@@ -100954,9 +101287,9 @@ var HarnessRemoteBridge = class {
         throw new RpcError("WORKSPACE_PATH_DENIED", "The requested workspace path is outside the workspace.");
       }
       const safeBaseRel = await this.verifyWorkspacePathContainment(sessionWorkspace.root, sessionWorkspace.cwd, rawBaseFile, endpoint);
-      const baseCandidate = resolve8(sessionWorkspace.root, safeBaseRel);
+      const baseCandidate = resolve9(sessionWorkspace.root, safeBaseRel);
       const baseDir = dirname7(baseCandidate);
-      const targetCandidate = resolve8(baseDir, path);
+      const targetCandidate = resolve9(baseDir, path);
       safeRel = await this.verifyWorkspacePathContainment(sessionWorkspace.root, sessionWorkspace.cwd, targetCandidate, endpoint);
     } else {
       const path = typeof args.path === "string" ? args.path : ".";
@@ -101013,7 +101346,7 @@ var HarnessRemoteBridge = class {
     }
   }
   async verifyWorkspacePathContainment(root2, cwd2, path, endpoint) {
-    const candidate = isAbsolute10(path) ? resolve8(path) : resolve8(cwd2, path);
+    const candidate = isAbsolute10(path) ? resolve9(path) : resolve9(cwd2, path);
     if (process.platform === "win32") {
       const rootDrive = parse4(root2).root.toLowerCase();
       const candDrive = parse4(candidate).root.toLowerCase();
@@ -101033,7 +101366,7 @@ var HarnessRemoteBridge = class {
       }
       const base = !isPathOutside(relCwd) ? cwd2 : root2;
       const rel = relative5(base, candidate);
-      const parts = rel.split(sep2).filter((p) => p.length > 0 && p !== ".");
+      const parts = rel.split(sep3).filter((p) => p.length > 0 && p !== ".");
       let currentPath = base;
       for (let i = 0; i < parts.length - 1; i++) {
         currentPath = join16(currentPath, parts[i]);
@@ -101070,7 +101403,7 @@ var HarnessRemoteBridge = class {
         throw new RpcError("WORKSPACE_TOO_LARGE", "The requested workspace file is too large.");
       }
       const safeRel = canonicalRel === "" ? "." : process.platform === "win32" ? canonicalRel.replaceAll("\\", "/") : canonicalRel;
-      const dispatchedCandidate = resolve8(root2, safeRel);
+      const dispatchedCandidate = resolve9(root2, safeRel);
       const dispatchedCanonical = await realpath7(dispatchedCandidate);
       const dispatchedRel = relative5(root2, dispatchedCanonical);
       if (isPathOutside(dispatchedRel)) {
@@ -101549,7 +101882,7 @@ var HostPluginRuntime = class {
       );
     }, this.logger);
     if (config2.serverUrl !== void 0) {
-      this.serverApi = new HostServerApi(config2.serverUrl, new ServerCredentialStore(identities.directory));
+      this.serverApi = new HostServerApi(config2.serverUrl, new ServerCredentialStore(identities.directory), fetch, "host", config2.httpServerAllowlist);
     }
   }
   connections;
@@ -101659,7 +101992,7 @@ var HostPluginRuntime = class {
     }, async (result) => {
       await this.serverApi.adoptPairing(result);
       if (!this.closed) this.serverConnection?.reconnect();
-    });
+    }, fetch, this.config.httpServerAllowlist);
   }
   async pairingControl(action, input4) {
     if (this.pairing === void 0 || this.closed) throw new ServerApiError("SERVER_NOT_CONFIGURED", "Configure and save the Server URL before pairing.", false);
@@ -102036,11 +102369,11 @@ function createPluginRouteDispatcher(readConnection, readPort, peer) {
   };
 }
 function withSignal(pending, signal) {
-  return new Promise((resolve9, reject) => {
+  return new Promise((resolve10, reject) => {
     const onAbort = () => reject(signal.reason);
     signal.addEventListener("abort", onAbort, { once: true });
     if (signal.aborted) onAbort();
-    void pending.then(resolve9, reject).finally(() => signal.removeEventListener("abort", onAbort));
+    void pending.then(resolve10, reject).finally(() => signal.removeEventListener("abort", onAbort));
   });
 }
 
@@ -102060,7 +102393,7 @@ var workspaceSchema = object4(
   { backend: string8, workspaceId: string8, path: string8, title: string8 },
   ["backend", "workspaceId", "path", "title"]
 );
-function remoteDiscoveryTools(resolve9) {
+function remoteDiscoveryTools(resolve10) {
   const output2 = (schema) => ({
     schema,
     render: (_args, value) => [{ type: "text", text: JSON.stringify(value) }]
@@ -102068,12 +102401,12 @@ function remoteDiscoveryTools(resolve9) {
   const run = async (signal, query) => {
     const lifetime = AbortSignal.any([signal, AbortSignal.timeout(12e4)]);
     lifetime.throwIfAborted();
-    const client = resolve9();
+    const client = resolve10();
     if (client === void 0) throw new Error("REMOTE_UNAVAILABLE: Configure Remote and sign in through the local Remote panel first.");
     try {
       const result = await query(client, lifetime);
       lifetime.throwIfAborted();
-      if (resolve9() !== client) throw new Error("Remote runtime changed.");
+      if (resolve10() !== client) throw new Error("Remote runtime changed.");
       return result;
     } catch {
       lifetime.throwIfAborted();
@@ -102113,7 +102446,7 @@ function remoteDiscoveryTools(resolve9) {
     }
   ];
 }
-function remoteSessionTools(resolve9) {
+function remoteSessionTools(resolve10) {
   const target3 = {
     hostId: { ...string8, description: "Exact hostId from remote_list_hosts." },
     backend: { type: "string", enum: ["harness"], description: "Session operations currently support native Harness only." },
@@ -102174,11 +102507,11 @@ function remoteSessionTools(resolve9) {
       sessionToolInputs[name2].parse(args);
       const signal = AbortSignal.any([exec2.signal, AbortSignal.timeout(name2 === "remote_upload_file" ? 60 * 6e4 : 12e4)]);
       signal.throwIfAborted();
-      const client = resolve9();
+      const client = resolve10();
       if (!client) throw new Error("REMOTE_UNAVAILABLE: Sign in through the local Remote panel.");
       try {
         const result = await client.runSessionTool(name2, args, signal);
-        if (resolve9() !== client) throw new RemoteSessionToolError("REMOTE_AUTHORITY_CHANGED: Inspect remote state; do not replay mutations.");
+        if (resolve10() !== client) throw new RemoteSessionToolError("REMOTE_AUTHORITY_CHANGED: Inspect remote state; do not replay mutations.");
         return result;
       } catch (error62) {
         if (error62 instanceof RemoteSessionToolError) throw error62;
@@ -102187,10 +102520,10 @@ function remoteSessionTools(resolve9) {
     }
   }));
 }
-function installRemoteDiscoveryTools(ctx, resolve9) {
+function installRemoteDiscoveryTools(ctx, resolve10) {
   ctx.inject(["tools"], (toolContext) => {
     const tools = toolContext.get("tools");
-    for (const definition of [...remoteDiscoveryTools(resolve9), ...remoteSessionTools(resolve9)]) {
+    for (const definition of [...remoteDiscoveryTools(resolve10), ...remoteSessionTools(resolve10)]) {
       toolContext.effect(() => tools.register(definition));
     }
   });
@@ -102201,15 +102534,15 @@ var PUMP_KEY = Symbol.for("ds-harness-remote.hmr-safe-settings-pump");
 function createPump() {
   const queue = [];
   let wake;
-  let sleeping = new Promise((resolve9) => {
-    wake = resolve9;
+  let sleeping = new Promise((resolve10) => {
+    wake = resolve10;
   });
   void (async () => {
     for (; ; ) {
       if (queue.length === 0) {
         await sleeping;
-        sleeping = new Promise((resolve9) => {
-          wake = resolve9;
+        sleeping = new Promise((resolve10) => {
+          wake = resolve10;
         });
       }
       const job = queue.shift();
@@ -102223,8 +102556,8 @@ function createPump() {
   })();
   return {
     enqueue(run) {
-      return new Promise((resolve9, reject) => {
-        queue.push({ run, resolve: resolve9, reject });
+      return new Promise((resolve10, reject) => {
+        queue.push({ run, resolve: resolve10, reject });
         wake();
       });
     }
@@ -102300,18 +102633,18 @@ var PluginUpdateChecker = class {
    * before the mirror is consulted.
    */
   fetchLatestVersion() {
-    return new Promise((resolve9) => {
+    return new Promise((resolve10) => {
       let pending = DIST_TAG_URLS.length;
       let settled = false;
       const settle2 = (latest) => {
         if (settled) return;
         if (latest !== void 0) {
           settled = true;
-          resolve9(latest);
+          resolve10(latest);
           return;
         }
         pending -= 1;
-        if (pending === 0) resolve9(void 0);
+        if (pending === 0) resolve10(void 0);
       };
       if (pending === 0) {
         settle2(void 0);
@@ -102685,7 +103018,7 @@ function resolveDependencies(input4) {
     stdout: input4.stdout ?? process.stdout,
     stderr: input4.stderr ?? process.stderr,
     now: input4.now ?? Date.now,
-    wait: input4.wait ?? ((milliseconds) => new Promise((resolve9) => setTimeout(resolve9, milliseconds))),
+    wait: input4.wait ?? ((milliseconds) => new Promise((resolve10) => setTimeout(resolve10, milliseconds))),
     renderQr: input4.renderQr ?? renderTerminalQr,
     createIdentityStore: input4.createIdentityStore ?? ((options) => new IdentityStore(options)),
     createHostApi: input4.createHostApi ?? ((serverUrl, store) => new HostServerApi(serverUrl, store))
@@ -102977,7 +103310,7 @@ async function activate(ctx, readConfig, entryId, requireRemoteEvents = false) {
       clientRuntime2 = new ClientModeRuntime(
         config3,
         clientIdentities,
-        new ClientServerApi(config3.serverUrl, new ServerCredentialStore(clientIdentities.directory)),
+        new ClientServerApi(config3.serverUrl, new ServerCredentialStore(clientIdentities.directory), fetch, config3.httpServerAllowlist),
         nativeTypertGateway,
         logger2,
         runtime2
