@@ -354,6 +354,8 @@ const viVN = {
     compactHistory: 'Rút gọn cuộc trò chuyện', compactHistoryNote: 'Rút ngắn lịch sử công cụ, chỉ giữ lại văn bản và trạng thái. Cần Host hỗ trợ. Mở lại cuộc trò chuyện sau khi thay đổi.',
     typographyDensity: 'Mật độ đọc', typographyDensityNote: 'Điều chỉnh chiều cao dòng, khoảng cách đoạn và đệm bong bóng chat',
     densityStandard: 'Chuẩn', densityCompact: 'Gọn', typographyDensitySaveFailed: 'Không lưu được cài đặt mật độ đọc',
+    activityDockMode: 'Widget hoạt động', activityDockModeNote: 'Chọn cách hiển thị tác vụ nền, subagent và nhóm agent phía trên khung nhập',
+    activityDockCompact: 'Thanh viên gọn', activityDockCards: 'Thẻ xếp chồng', activityDockHidden: 'Luôn ẩn', activityDockModeSaveFailed: 'Không lưu được cài đặt widget hoạt động',
     statusBar: 'Hiện thanh trạng thái', statusBarNote: 'Hiện giờ, pin và trạng thái mạng ở đầu màn hình. Tắt để ẩn thanh trạng thái hệ thống.', statusBarSaveFailed: 'Không lưu được cài đặt thanh trạng thái', statusBarSaveFailedBody: 'Không ghi được vào bộ nhớ cục bộ. Vui lòng thử lại.',
     theme: 'Chế độ tối', themeLight: 'Sáng', themeDark: 'Tối', themeSystem: 'Hệ thống',
     chat: 'Trò chuyện',
